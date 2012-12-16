@@ -13,6 +13,7 @@ OPENID_PROVIDERS = [
     
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
+WHOOSH_BASE = os.path.join(basedir, 'search.db')
 
 # mail server settings
 MAIL_SERVER = 'localhost'
@@ -25,4 +26,4 @@ ADMINS = ['you@example.com']
 
 # pagination
 POSTS_PER_PAGE = 3
-
+MAX_SEARCH_RESULTS = 50
