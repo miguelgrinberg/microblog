@@ -1,0 +1,5 @@
+<table>
+    <tr valign="top">
+        <td><img src="{{post.author.avatar(50)}}"></td><td><i>{{post.author.nickname}} says:</i><br>{{post.body}}</td>
+    </tr>
+</table>
