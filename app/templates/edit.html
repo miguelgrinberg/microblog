@@ -3,26 +3,34 @@
 
 {% block content %}
 <h1>Edit Your Profile</h1>
-<form action="" method="post" name="edit">
-    {{form.hidden_tag()}}
-    <table>
-        <tr>
-            <td>Your nickname:</td>
-            <td>
-                {{form.nickname(size = 24)}}
+{% include 'flash.html' %}
+<div class="well">
+    <form class="form-horizontal" action="" method="post" name="edit">
+        {{form.hidden_tag()}}
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="nickname">Your nickname:</label>
+            <div class="controls">
+                {{ form.nickname(maxlength = 64, class = "span4") }}
                 {% for error in form.errors.nickname %}
-                <br><span style="color: red;">[{{error}}]</span>
+                    <span class="help-inline">[{{error}}]</span><br>
                 {% endfor %}
-            </td>
-        </tr>
-        <tr>
-            <td>About yourself:</td>
-            <td>{{form.about_me(cols = 32, rows = 4)}}</td>
-        </tr>
-        <tr>
-            <td></td>
-            <td><input type="submit" value="Save Changes"></td>
-        </tr>
-    </table>
+            </div>
+        </div>
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="about_me">About yourself:</label>
+            <div class="controls">
+                {{ form.about_me(cols = 64, rows = 4, class = "span4") }}
+                {% for error in form.errors.about_me %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn btn-primary" type="submit" value="Save Changes">
+            </div>
+        </div>
+    </form>
+</div>
 </form>
 {% endblock %}

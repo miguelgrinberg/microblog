@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
   <head>
     {% if title %}
@@ -5,26 +6,41 @@
     {% else %}
     <title>microblog</title>
     {% endif %}
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
-    <div>Microblog:
-        <a href="{{ url_for('index') }}">Home</a>
-        {% if g.user.is_authenticated() %}
-        | <a href="{{ url_for('user', nickname = g.user.nickname) }}">Your Profile</a>
-        | <form style="display: inline;" action="{{url_for('search')}}" method="post" name="search">{{g.search_form.hidden_tag()}}{{g.search_form.search(size=20)}}<input type="submit" value="Search"></form>
-        | <a href="{{ url_for('logout') }}">Logout</a>
-        {% endif %}
-    </div>
-    <hr>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <ul>
-    {% for message in messages %}
-        <li>{{ message }} </li>
-    {% endfor %}
-    </ul>
-    {% endif %}
-    {% endwith %}
-    {% block content %}{% endblock %}
+    <div class="container">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/">microblog</a>
+            <ul class="nav">
+              <li><a href="{{ url_for('index') }}">Home</a></li>
+              {% if g.user.is_authenticated() %}
+              <li><a href="{{ url_for('user', nickname = g.user.nickname) }}">Your Profile</a></li>
+              <li><a href="{{ url_for('logout') }}">Logout</a></li>
+              {% endif %}
+            </ul>
+          <div class="nav-collapse collapse">
+            {% if g.user.is_authenticated() %}
+            <form class="navbar-search pull-right" action="{{url_for('search')}}" method="post" name="search">{{g.search_form.hidden_tag()}}{{g.search_form.search(size=20,placeholder="Search",class="search-query")}}</form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="span12">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+    </div>   
   </body>
 </html>

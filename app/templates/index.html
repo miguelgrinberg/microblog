@@ -3,28 +3,39 @@
 
 {% block content %}
 <h1>Hi, {{g.user.nickname}}!</h1>
-<form action="" method="post" name="post">
-    {{form.hidden_tag()}}
-    <table>
-        <tr>
-            <td>Say something:</td>
-            <td>{{ form.post(size = 30, maxlength = 140) }}</td>
-            <td>
-            {% for error in form.errors.post %}
-            <span style="color: red;">[{{error}}]</span><br>
-            {% endfor %}
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td><input type="submit" value="Post!"></td>
-            <td></td>
-        </tr>
-    </table>
-</form>
+{% include 'flash.html' %}
+<div class="well">
+    <form class="form-horizontal" action="" method="post" name="post">
+        {{form.hidden_tag()}}
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="post">Say something:</label>
+            <div class="controls">
+                {{ form.post(size = 30, maxlength = 140) }}
+                {% for error in form.errors.post %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn btn-primary" type="submit" value="Post!">
+            </div>
+        </div>
+    </form>
+</div>
 {% for post in posts.items %}
     {% include 'post.html' %}
 {% endfor %}
-{% if posts.has_prev %}<a href="{{ url_for('index', page = posts.prev_num) }}"><< Newer posts</a>{% else %}<< Newer posts{% endif %} | 
-{% if posts.has_next %}<a href="{{ url_for('index', page = posts.next_num) }}">Older posts >></a>{% else %}Older posts >>{% endif %}
+<ul class="pager">
+    {% if posts.has_prev %}
+    <li class="previous"><a href="{{ url_for('index', page = posts.prev_num) }}">Newer posts</a></li>
+    {% else %}
+    <li class="previous disabled"><a href="#">Newer posts</a></li>
+    {% endif %}
+    {% if posts.has_next %}
+    <li class="next"><a href="{{ url_for('index', page = posts.next_num) }}">Older posts</a></li>
+    {% else %}
+    <li class="next disabled"><a href="#">Older posts</a></li>
+    {% endif %}
+</ul>
 {% endblock %}

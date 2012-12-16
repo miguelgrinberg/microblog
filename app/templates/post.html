@@ -1,5 +1,9 @@
-<table>
-    <tr valign="top">
-        <td><img src="{{post.author.avatar(50)}}"></td><td><i>{{post.author.nickname}} says:</i><br>{{post.body}}</td>
+<table class="table table-hover">
+    <tr>
+        <td width="70px"><a href="{{url_for('user', nickname = post.author.nickname)}}"><img src="{{post.author.avatar(70)}}" /></a></td>
+        <td>
+            <p><a href="{{url_for('user', nickname = post.author.nickname)}}">{{post.author.nickname}}</a> said on {{post.timestamp}}:</p>
+            <p><strong>{{post.body}}</strong></p>
+        </td>
     </tr>
 </table>

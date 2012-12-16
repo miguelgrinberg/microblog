@@ -15,20 +15,38 @@ function set_openid(openid, pr)
     form.elements['openid'].value = openid
 }
 </script>
-<h1>Sign In</h1>
-<form action="" method="post" name="login">
-    {{form.hidden_tag()}}
-    <p>
-        Please enter your OpenID, or select one of the providers below:<br>
-        {{form.openid(size=80)}}
-        {% for error in form.errors.openid %}
-        <span style="color: red;">[{{error}}]</span>
-        {% endfor %}<br>
-        |{% for pr in providers %}
-        <a href="javascript:set_openid('{{pr.url}}', '{{pr.name}}');">{{pr.name}}</a> |
-        {% endfor %}
-    </p>
-    <p>{{form.remember_me}} Remember Me</p>
-    <p><input type="submit" value="Sign In"></p>
-</form>
+{% include 'flash.html' %}
+<div class="well">
+    <h3>Please Sign In</h3>
+    <form class="form" action="" method="post" name="login">
+        {{form.hidden_tag()}}
+        <div class="help-block">Click on your OpenID provider below:</div>
+        <div class="control-group">
+            {% for pr in providers %}
+            <a href="javascript:set_openid('{{pr.url}}', '{{pr.name}}');"><img src="/static/img/{{pr.name.lower()}}.png" class="img-polaroid" style="margin:2px;" /></a>
+            {% endfor %}
+        </div>
+        <div class="control-group{% if form.errors.openid %} error{% endif %}">
+            <label class="control-label" for="openid">Or enter your OpenID here:</label>
+            <div class="controls">
+                {{ form.openid(size = 80, class = "span4") }}
+                {% for error in form.errors.openid %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <label class="checkbox" for="remember_me">
+                    {{ form.remember_me }} Remember Me
+                </label>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn btn-primary" type="submit" value="Sign In">
+            </div>
+        </div>
+    </form>
+</div>
 {% endblock %}
