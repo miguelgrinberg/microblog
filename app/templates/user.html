@@ -10,7 +10,7 @@
     <h1>{{user.nickname}}</h1>
     {% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
     {% if user.last_seen %}<p><em>Last seen on: {{user.last_seen}}</em></p>{% endif %}
-    <p>Followers: {{user.followers.count()}} | Following: {{user.followed.count()}} |
+    <p>Followers: {{user.followers.count() - 1}} | Following: {{user.followed.count() - 1}} |
     {% if user.id == g.user.id %}
         <a href="{{url_for('edit')}}">Edit your profile</a>
     {% elif not g.user.is_following(user) %}
