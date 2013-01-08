@@ -2,10 +2,7 @@
     <tr>
         <td width="70px"><a href="{{url_for('user', nickname = post.author.nickname)}}"><img src="{{post.author.avatar(70)}}" /></a></td>
         <td>
-            <p><a href="{{url_for('user', nickname = post.author.nickname)}}">{{post.author.nickname}}</a> said
-            <script>
-            document.write(moment("{{post.timestamp.strftime("%Y-%m-%dT%H:%M:%S Z")}}").fromNow());
-            </script>:</p>
+            <p><a href="{{url_for('user', nickname = post.author.nickname)}}">{{post.author.nickname}}</a> said {{momentjs(post.timestamp).fromNow()}}:</p>
             <p><strong>{{post.body}}</strong></p>
         </td>
     </tr>
