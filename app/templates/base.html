@@ -11,6 +11,9 @@
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/moment.min.js"></script>
+    {% if g.locale != 'en' %}
+    <script src="/static/js/moment-{{g.locale}}.min.js"></script>
+    {% endif %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
@@ -24,15 +27,15 @@
           </a>
           <a class="brand" href="/">microblog</a>
             <ul class="nav">
-              <li><a href="{{ url_for('index') }}">Home</a></li>
+              <li><a href="{{ url_for('index') }}">{{ _('Home') }}</a></li>
               {% if g.user.is_authenticated() %}
-              <li><a href="{{ url_for('user', nickname = g.user.nickname) }}">Your Profile</a></li>
-              <li><a href="{{ url_for('logout') }}">Logout</a></li>
+              <li><a href="{{ url_for('user', nickname = g.user.nickname) }}">{{ _('Your Profile') }}</a></li>
+              <li><a href="{{ url_for('logout') }}">{{ _('Logout') }}</a></li>
               {% endif %}
             </ul>
           <div class="nav-collapse collapse">
             {% if g.user.is_authenticated() %}
-            <form class="navbar-search pull-right" action="{{url_for('search')}}" method="post" name="search">{{g.search_form.hidden_tag()}}{{g.search_form.search(size=20,placeholder="Search",class="search-query")}}</form>
+            <form class="navbar-search pull-right" action="{{url_for('search')}}" method="post" name="search">{{g.search_form.hidden_tag()}}{{g.search_form.search(size=20,placeholder=_('Search'),class="search-query")}}</form>
             {% endif %}
           </div>
         </div>
@@ -45,3 +48,4 @@
     </div>   
   </body>
 </html>
+

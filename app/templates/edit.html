@@ -2,13 +2,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Edit Your Profile</h1>
+<h1>{{ _('Edit Your Profile') }}</h1>
 {% include 'flash.html' %}
 <div class="well">
     <form class="form-horizontal" action="" method="post" name="edit">
         {{form.hidden_tag()}}
         <div class="control-group{% if form.errors.post %} error{% endif %}">
-            <label class="control-label" for="nickname">Your nickname:</label>
+            <label class="control-label" for="nickname">{{ _('Your nickname:') }}</label>
             <div class="controls">
                 {{ form.nickname(maxlength = 64, class = "span4") }}
                 {% for error in form.errors.nickname %}
@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="control-group{% if form.errors.post %} error{% endif %}">
-            <label class="control-label" for="about_me">About yourself:</label>
+            <label class="control-label" for="about_me">{{ _('About yourself:') }}</label>
             <div class="controls">
                 {{ form.about_me(cols = 64, rows = 4, class = "span4") }}
                 {% for error in form.errors.about_me %}
@@ -27,7 +27,7 @@
         </div>
         <div class="control-group">
             <div class="controls">
-                <input class="btn btn-primary" type="submit" value="Save Changes">
+                <input class="btn btn-primary" type="submit" value="{{ _('Save Changes') }}">
             </div>
         </div>
     </form>

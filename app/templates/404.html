@@ -2,6 +2,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>File Not Found</h1>
-<p><a href="{{url_for('index')}}">Back</a></p>
+<h1>{{ _('File Not Found') }}</h1>
+<p><a href="{{url_for('index')}}">{{ _('Back') }}</a></p>
 {% endblock %}

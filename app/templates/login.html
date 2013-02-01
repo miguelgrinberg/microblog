@@ -17,17 +17,17 @@ function set_openid(openid, pr)
 </script>
 {% include 'flash.html' %}
 <div class="well">
-    <h3>Please Sign In</h3>
+    <h3>{{ _('Please Sign In') }}</h3>
     <form class="form" action="" method="post" name="login">
         {{form.hidden_tag()}}
-        <div class="help-block">Click on your OpenID provider below:</div>
+        <div class="help-block">{{ _('Click on your OpenID provider below:') }}</div>
         <div class="control-group">
             {% for pr in providers %}
             <a href="javascript:set_openid('{{pr.url}}', '{{pr.name}}');"><img src="/static/img/{{pr.name.lower()}}.png" class="img-polaroid" style="margin:2px;" /></a>
             {% endfor %}
         </div>
         <div class="control-group{% if form.errors.openid %} error{% endif %}">
-            <label class="control-label" for="openid">Or enter your OpenID here:</label>
+            <label class="control-label" for="openid">{{ _('Or enter your OpenID here:') }}</label>
             <div class="controls">
                 {{ form.openid(size = 80, class = "span4") }}
                 {% for error in form.errors.openid %}
@@ -38,13 +38,13 @@ function set_openid(openid, pr)
         <div class="control-group">
             <div class="controls">
                 <label class="checkbox" for="remember_me">
-                    {{ form.remember_me }} Remember Me
+                    {{ form.remember_me }} {{ _('Remember Me') }}
                 </label>
             </div>
         </div>
         <div class="control-group">
             <div class="controls">
-                <input class="btn btn-primary" type="submit" value="Sign In">
+                <input class="btn btn-primary" type="submit" value="{{ _('Sign In') }}">
             </div>
         </div>
     </form>

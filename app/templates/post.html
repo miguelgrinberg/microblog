@@ -2,7 +2,9 @@
     <tr>
         <td width="70px"><a href="{{url_for('user', nickname = post.author.nickname)}}"><img src="{{post.author.avatar(70)}}" /></a></td>
         <td>
-            <p><a href="{{url_for('user', nickname = post.author.nickname)}}">{{post.author.nickname}}</a> said {{momentjs(post.timestamp).fromNow()}}:</p>
+            {% autoescape false %}
+            <p>{{ _('%(nickname)s said %(when)s:', nickname = '<a href="%s">%s</a>' % (url_for('user', nickname = post.author.nickname), post.author.nickname), when = momentjs(post.timestamp).fromNow()) }}</p>
+            {% endautoescape %}
             <p><strong>{{post.body}}</strong></p>
         </td>
     </tr>

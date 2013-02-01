@@ -10,15 +10,15 @@
     <h1>{{user.nickname}}</h1>
     {% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
     {% if user.last_seen %}
-    <p><em>Last seen: {{momentjs(user.last_seen).calendar()}}</em></p>
+    <p><em>{{ _('Last seen:') }} {{ momentjs(user.last_seen).calendar() }}</em></p>
     {% endif %}
-    <p>Followers: {{user.followers.count() - 1}} | Following: {{user.followed.count() - 1}} |
+    <p>{{ _('Followers:') }} {{user.followers.count() - 1}} | {{ _('Following:') }} {{user.followed.count() - 1}} |
     {% if user.id == g.user.id %}
-        <a href="{{url_for('edit')}}">Edit your profile</a>
+        <a href="{{url_for('edit')}}">{{ _('Edit your profile') }}</a>
     {% elif not g.user.is_following(user) %}
-        <a href="{{url_for('follow', nickname = user.nickname)}}">Follow</a>
+        <a href="{{url_for('follow', nickname = user.nickname)}}">{{ _('Follow') }}</a>
     {% else %}
-        <a href="{{url_for('unfollow', nickname = user.nickname)}}">Unfollow</a>
+        <a href="{{url_for('unfollow', nickname = user.nickname)}}">{{ _('Unfollow') }}</a>
     {% endif %}
     </p>
 </div>
@@ -27,14 +27,14 @@
 {% endfor %}
 <ul class="pager">
     {% if posts.has_prev %}
-    <li class="previous"><a href="{{ url_for('user', nickname = user.nickname, page = posts.prev_num) }}">Newer posts</a></li>
+    <li class="previous"><a href="{{ url_for('user', nickname = user.nickname, page = posts.prev_num) }}">{{ _('Newer posts') }}</a></li>
     {% else %}
-    <li class="previous disabled"><a href="#">Newer posts</a></li>
+    <li class="previous disabled"><a href="#">{{ _('Newer posts') }}</a></li>
     {% endif %}
     {% if posts.has_next %}
-    <li class="next"><a href="{{ url_for('user', nickname = user.nickname, page = posts.next_num) }}">Older posts</a></li>
+    <li class="next"><a href="{{ url_for('user', nickname = user.nickname, page = posts.next_num) }}">{{ _('Older posts') }}</a></li>
     {% else %}
-    <li class="next disabled"><a href="#">Older posts</a></li>
+    <li class="next disabled"><a href="#">{{ _('Older posts') }}</a></li>
     {% endif %}
 </ul>
 {% endblock %}

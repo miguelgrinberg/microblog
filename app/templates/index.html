@@ -2,13 +2,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Hi, {{g.user.nickname}}!</h1>
+<h1>{{ _('Hi, %(nickname)s!', nickname = g.user.nickname) }}</h1>
 {% include 'flash.html' %}
 <div class="well">
     <form class="form-horizontal" action="" method="post" name="post">
         {{form.hidden_tag()}}
         <div class="control-group{% if form.errors.post %} error{% endif %}">
-            <label class="control-label" for="post">Say something:</label>
+            <label class="control-label" for="post">{{ _('Say something:') }}</label>
             <div class="controls">
                 {{ form.post(size = 30, maxlength = 140) }}
                 {% for error in form.errors.post %}
@@ -18,7 +18,7 @@
         </div>
         <div class="control-group">
             <div class="controls">
-                <input class="btn btn-primary" type="submit" value="Post!">
+                <input class="btn btn-primary" type="submit" value="{{ _('Post!') }}">
             </div>
         </div>
     </form>
@@ -28,14 +28,14 @@
 {% endfor %}
 <ul class="pager">
     {% if posts.has_prev %}
-    <li class="previous"><a href="{{ url_for('index', page = posts.prev_num) }}">Newer posts</a></li>
+    <li class="previous"><a href="{{ url_for('index', page = posts.prev_num) }}">{{ _('Newer posts') }}</a></li>
     {% else %}
-    <li class="previous disabled"><a href="#">Newer posts</a></li>
+    <li class="previous disabled"><a href="#">{{ _('Newer posts') }}</a></li>
     {% endif %}
     {% if posts.has_next %}
-    <li class="next"><a href="{{ url_for('index', page = posts.next_num) }}">Older posts</a></li>
+    <li class="next"><a href="{{ url_for('index', page = posts.next_num) }}">{{ _('Older posts') }}</a></li>
     {% else %}
-    <li class="next disabled"><a href="#">Older posts</a></li>
+    <li class="next disabled"><a href="#">{{ _('Older posts') }}</a></li>
     {% endif %}
 </ul>
 {% endblock %}
