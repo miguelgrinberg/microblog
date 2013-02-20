@@ -18,4 +18,5 @@ subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'sqlalchemy-migra
 subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'flask-whooshalchemy'])
 subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'flask-wtf'])
 subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'flask-babel'])
+subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'guess-language'])
 subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'flup'])
