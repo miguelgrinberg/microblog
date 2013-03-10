@@ -14,7 +14,11 @@ OPENID_PROVIDERS = [
     
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
+SQLALCHEMY_RECORD_QUERIES = True
 WHOOSH_BASE = os.path.join(basedir, 'search.db')
+
+# slow database query threshold (in seconds)
+DATABASE_QUERY_TIMEOUT = 0.5
 
 # email server
 MAIL_SERVER = 'your.mailserver.com'
@@ -38,5 +42,5 @@ MS_TRANSLATOR_CLIENT_SECRET = '' # enter your MS translator app secret here
 ADMINS = ['you@example.com']
 
 # pagination
-POSTS_PER_PAGE = 3
+POSTS_PER_PAGE = 50
 MAX_SEARCH_RESULTS = 50

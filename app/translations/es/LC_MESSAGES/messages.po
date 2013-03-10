@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-02-19 22:11-0800\n"
-"PO-Revision-Date: 2013-02-19 22:12-0800\n"
+"POT-Creation-Date: 2013-03-09 20:29-0800\n"
+"PO-Revision-Date: 2013-03-09 20:29-0800\n"
 "Last-Translator: Miguel Grinberg <miguel.grinberg@gmail.com>\n"
 "Language-Team: es <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -38,55 +38,55 @@ msgstr "Este nombre de usuario ya esta usado. Por favor elije otro."
 msgid "Error: translation service not configured."
 msgstr "Error: el servicio de traducción no está configurado."
 
-#: app/translate.py:35 app/translate.py:55
-msgid "Error: Unexpected error."
-msgstr "Error: Un error inesperado ha ocurrido."
-
-#: app/translate.py:39
+#: app/translate.py:40
 msgid "Error: translation service not available."
 msgstr "Error: servicio de traducción no disponible."
 
-#: app/views.py:56
+#: app/translate.py:56
+msgid "Error: Unexpected error."
+msgstr "Error: Un error inesperado ha ocurrido."
+
+#: app/views.py:64
 msgid "Your post is now live!"
 msgstr "¡Tu artículo ha sido publicado!"
 
-#: app/views.py:81
+#: app/views.py:89
 msgid "Invalid login. Please try again."
 msgstr "Credenciales inválidas. Por favor intenta de nuevo."
 
-#: app/views.py:114
+#: app/views.py:122
 #, python-format
 msgid "User %(nickname)s not found."
 msgstr "El usuario %(nickname)s no existe."
 
-#: app/views.py:130
+#: app/views.py:138
 msgid "Your changes have been saved."
 msgstr "Tus cambios han sido guardados."
 
-#: app/views.py:146
+#: app/views.py:154
 msgid "You can't follow yourself!"
 msgstr "¡No te puedes seguir a tí mismo!"
 
-#: app/views.py:150
+#: app/views.py:158
 #, python-format
 msgid "Cannot follow %(nickname)s."
 msgstr "No se pudo seguir a %(nickname)s."
 
-#: app/views.py:154
+#: app/views.py:162
 #, python-format
 msgid "You are now following %(nickname)s!"
 msgstr "¡Ya estás siguiendo a %(nickname)s!"
 
-#: app/views.py:166
+#: app/views.py:174
 msgid "You can't unfollow yourself!"
 msgstr "¡No te puedes dejar de seguir a tí mismo!"
 
-#: app/views.py:170
+#: app/views.py:178
 #, python-format
 msgid "Cannot unfollow %(nickname)s."
 msgstr "No se pudo dejar de seguir a %(nickname)s."
 
-#: app/views.py:174
+#: app/views.py:182
 #, python-format
 msgid "You have stopped following %(nickname)s."
 msgstr "Ya no sigues más a %(nickname)s."
@@ -207,6 +207,10 @@ msgstr "%(nickname)s dijo %(when)s:"
 #: app/templates/post.html:12
 msgid "Translate"
 msgstr "Traducir"
+
+#: app/templates/post.html:18
+msgid "Delete"
+msgstr "Borrar"
 
 #: app/templates/search_results.html:5
 #, python-format
