@@ -6,13 +6,13 @@
     {% else %}
     <title>microblog</title>
     {% endif %}
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="{{ url_for('.static', filename = 'css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ url_for('.static', filename = 'css/bootstrap-responsive.min.css') }}" rel="stylesheet">
     <script src="http://code.jquery.com/jquery-latest.js"></script>
-    <script src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/moment.min.js"></script>
+    <script src="{{ url_for('.static', filename = 'js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('.static', filename = 'js/moment.min.js') }}"></script>
     {% if g.locale != 'en' %}
-    <script src="/static/js/moment-{{g.locale}}.min.js"></script>
+    <script src="{{ url_for('.static', filename = 'js/moment-' + g.locale + '.min.js') }}"></script>
     {% endif %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
@@ -44,7 +44,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="/">microblog</a>
+          <a class="brand" href="{{ url_for('index') }}">microblog</a>
             <ul class="nav">
               <li><a href="{{ url_for('index') }}">{{ _('Home') }}</a></li>
               {% if g.user.is_authenticated() %}

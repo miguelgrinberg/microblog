@@ -19,7 +19,7 @@ oid = OpenID(app, os.path.join(basedir, 'tmp'))
 mail = Mail(app)
 babel = Babel(app)
 
-if not app.debug:
+if not app.debug and MAIL_SERVER != '':
     import logging
     from logging.handlers import SMTPHandler
     credentials = None

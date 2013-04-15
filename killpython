@@ -1,0 +1,1 @@
+killall /home/apps/microblog/flask/bin/python

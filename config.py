@@ -12,7 +12,10 @@ OPENID_PROVIDERS = [
     { 'name': 'Flickr', 'url': 'http://www.flickr.com/<username>' },
     { 'name': 'MyOpenID', 'url': 'https://www.myopenid.com' }]
     
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+if os.environ.get('SQLALCHEMY_DATABASE_URI') is None:
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db') + '?check_same_thread=False'
+else:
+    SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 SQLALCHEMY_RECORD_QUERIES = True
 WHOOSH_BASE = os.path.join(basedir, 'search.db')
@@ -21,7 +24,7 @@ WHOOSH_BASE = os.path.join(basedir, 'search.db')
 DATABASE_QUERY_TIMEOUT = 0.5
 
 # email server
-MAIL_SERVER = 'your.mailserver.com'
+MAIL_SERVER = '' # your mailserver
 MAIL_PORT = 25
 MAIL_USE_TLS = False
 MAIL_USE_SSL = False
