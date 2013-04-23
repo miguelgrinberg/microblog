@@ -9,7 +9,7 @@ from datetime import datetime
 from emails import follower_notification
 from guess_language import guessLanguage
 from translate import microsoft_translate
-from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES, DATABASE_QUERY_TIMEOUT
+from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES, DATABASE_QUERY_TIMEOUT, WHOOSH_ENABLED
 
 @lm.user_loader
 def load_user(id):
@@ -28,6 +28,7 @@ def before_request():
         db.session.commit()
         g.search_form = SearchForm()
     g.locale = get_locale()
+    g.search_enabled = WHOOSH_ENABLED
 
 @app.after_request
 def after_request(response):
