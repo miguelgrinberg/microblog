@@ -88,7 +88,7 @@ def login():
 def after_login(resp):
     if resp.email is None or resp.email == "":
         flash(gettext('Invalid login. Please try again.'))
-        redirect(url_for('login'))
+        return redirect(url_for('login'))
     user = User.query.filter_by(email = resp.email).first()
     if user is None:
         nickname = resp.nickname
