@@ -5,7 +5,7 @@ if sys.platform == 'win32':
     bin = 'Scripts'
 else:
     bin = 'bin'
-subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'flask'])
+subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'flask<0.10'])
 subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'flask-login'])
 subprocess.call([os.path.join('flask', bin, 'pip'), 'install', 'flask-openid'])
 if sys.platform == 'win32':
