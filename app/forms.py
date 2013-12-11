@@ -1,5 +1,6 @@
-from flask.ext.wtf import Form, TextField, BooleanField, TextAreaField
-from flask.ext.wtf import Required, Length
+from flask.ext.wtf import Form
+from wtforms import TextField, BooleanField, TextAreaField
+from wtforms.validators import Required, Length
 from flask.ext.babel import gettext
 from app.models import User
 
