@@ -6,4 +6,3 @@ if sys.platform == 'win32':
 else:
     pybabel = 'flask/bin/pybabel'
 os.system(pybabel + ' compile -d app/translations')
-
