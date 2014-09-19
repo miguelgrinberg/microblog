@@ -6,14 +6,15 @@ CSRF_ENABLED = True
 SECRET_KEY = 'you-will-never-guess'
 
 OPENID_PROVIDERS = [
-    { 'name': 'Google', 'url': 'https://www.google.com/accounts/o8/id' },
-    { 'name': 'Yahoo', 'url': 'https://me.yahoo.com' },
-    { 'name': 'AOL', 'url': 'http://openid.aol.com/<username>' },
-    { 'name': 'Flickr', 'url': 'http://www.flickr.com/<username>' },
-    { 'name': 'MyOpenID', 'url': 'https://www.myopenid.com' }]
-    
+    {'name': 'Google', 'url': 'https://www.google.com/accounts/o8/id'},
+    {'name': 'Yahoo', 'url': 'https://me.yahoo.com'},
+    {'name': 'AOL', 'url': 'http://openid.aol.com/<username>'},
+    {'name': 'Flickr', 'url': 'http://www.flickr.com/<username>'},
+    {'name': 'MyOpenID', 'url': 'https://www.myopenid.com'}]
+
 if os.environ.get('DATABASE_URL') is None:
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db') + '?check_same_thread=False'
+    SQLALCHEMY_DATABASE_URI = ('sqlite:///' + os.path.join(basedir, 'app.db') +
+                               '?check_same_thread=False')
 else:
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
@@ -27,12 +28,12 @@ WHOOSH_ENABLED = os.environ.get('HEROKU') is None
 DATABASE_QUERY_TIMEOUT = 0.5
 
 # email server
-MAIL_SERVER = '' # your mailserver
+MAIL_SERVER = ''  # your mailserver
 MAIL_PORT = 25
 MAIL_USE_TLS = False
 MAIL_USE_SSL = False
-MAIL_USERNAME = 'you'
-MAIL_PASSWORD = 'your-password'
+MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
 # available languages
 LANGUAGES = {
@@ -41,8 +42,8 @@ LANGUAGES = {
 }
 
 # microsoft translation service
-MS_TRANSLATOR_CLIENT_ID = '' # enter your MS translator app id here
-MS_TRANSLATOR_CLIENT_SECRET = '' # enter your MS translator app secret here
+MS_TRANSLATOR_CLIENT_ID = ''  # enter your MS translator app id here
+MS_TRANSLATOR_CLIENT_SECRET = ''  # enter your MS translator app secret here
 
 # administrator list
 ADMINS = ['you@example.com']

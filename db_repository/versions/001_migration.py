@@ -9,7 +9,6 @@ user = Table('user', post_meta,
     Column('id', Integer, primary_key=True, nullable=False),
     Column('nickname', String(length=64)),
     Column('email', String(length=120)),
-    Column('role', SmallInteger, default=ColumnDefault(0)),
 )
 
 

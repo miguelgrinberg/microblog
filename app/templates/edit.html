@@ -2,35 +2,34 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>{{ _('Edit Your Profile') }}</h1>
-{% include 'flash.html' %}
-<div class="well">
-    <form class="form-horizontal" action="" method="post" name="edit">
-        {{form.hidden_tag()}}
-        <div class="control-group{% if form.errors.post %} error{% endif %}">
-            <label class="control-label" for="nickname">{{ _('Your nickname:') }}</label>
-            <div class="controls">
-                {{ form.nickname(maxlength = 64, class = "span4") }}
-                {% for error in form.errors.nickname %}
-                    <span class="help-inline">[{{error}}]</span><br>
-                {% endfor %}
+    <h1>{{ _('Edit Your Profile') }}</h1>
+    {% include 'flash.html' %}
+    <div class="well">
+        <form class="form-horizontal" action="" method="post" name="edit">
+            {{ form.hidden_tag() }}
+            <div class="control-group{% if form.nickname.errors %} error{% endif %}">
+                <label class="control-label" for="nickname">{{ _('Your nickname:') }}</label>
+                <div class="controls">
+                    {{ form.nickname(maxlength=64, class="span4") }}
+                    {% for error in form.nickname.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-        <div class="control-group{% if form.errors.post %} error{% endif %}">
-            <label class="control-label" for="about_me">{{ _('About yourself:') }}</label>
-            <div class="controls">
-                {{ form.about_me(cols = 64, rows = 4, class = "span4") }}
-                {% for error in form.errors.about_me %}
-                    <span class="help-inline">[{{error}}]</span><br>
-                {% endfor %}
+            <div class="control-group{% if form.about_me.errors %} error{% endif %}">
+                <label class="control-label" for="about_me">{{ _('About yourself:') }}</label>
+                <div class="controls">
+                    {{ form.about_me(cols=64, rows=4, class="span4") }}
+                    {% for error in form.about_me.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-        <div class="control-group">
-            <div class="controls">
-                <input class="btn btn-primary" type="submit" value="{{ _('Save Changes') }}">
+            <div class="control-group">
+                <div class="controls">
+                    <input class="btn btn-primary" type="submit" value="{{ _('Save Changes') }}">
+                </div>
             </div>
-        </div>
-    </form>
-</div>
-</form>
+        </form>
+    </div>
 {% endblock %}

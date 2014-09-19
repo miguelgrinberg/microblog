@@ -2,17 +2,17 @@
 <html>
   <head>
     {% if title %}
-    <title>{{title}} - microblog</title>
+    <title>{{ title }} - microblog</title>
     {% else %}
     <title>microblog</title>
     {% endif %}
-    <link href="{{ url_for('.static', filename = 'css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
-    <link href="{{ url_for('.static', filename = 'css/bootstrap-responsive.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('.static', filename='css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ url_for('.static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet">
     <script src="http://code.jquery.com/jquery-latest.js"></script>
-    <script src="{{ url_for('.static', filename = 'js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('.static', filename = 'js/moment.min.js') }}"></script>
+    <script src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('.static', filename='js/moment.min.js') }}"></script>
     {% if g.locale != 'en' %}
-    <script src="{{ url_for('.static', filename = 'js/moment-' + g.locale + '.min.js') }}"></script>
+    <script src="{{ url_for('.static', filename='js/moment-' + g.locale + '.min.js') }}"></script>
     {% endif %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
@@ -48,13 +48,13 @@
             <ul class="nav">
               <li><a href="{{ url_for('index') }}">{{ _('Home') }}</a></li>
               {% if g.user.is_authenticated() %}
-              <li><a href="{{ url_for('user', nickname = g.user.nickname) }}">{{ _('Your Profile') }}</a></li>
+              <li><a href="{{ url_for('user', nickname=g.user.nickname) }}">{{ _('Your Profile') }}</a></li>
               <li><a href="{{ url_for('logout') }}">{{ _('Logout') }}</a></li>
               {% endif %}
             </ul>
           <div class="nav-collapse collapse">
-            {% if g.user.is_authenticated() and g.search_enabled %}
-            <form class="navbar-search pull-right" action="{{url_for('search')}}" method="post" name="search">{{g.search_form.hidden_tag()}}{{g.search_form.search(size=20,placeholder=_('Search'),class="search-query")}}</form>
+            {% if g.user.is_authenticated() %}
+            <form class="navbar-search pull-right" action="{{ url_for('search') }}" method="post" name="search">{{ g.search_form.hidden_tag() }}{{ g.search_form.search(size=20, placeholder=_('Search'), class="search-query")}}</form>
             {% endif %}
           </div>
         </div>
