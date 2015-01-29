@@ -46,9 +46,8 @@ class User(db.Model):
         while True:
             new_nickname = nickname + str(version)
             if User.query.filter_by(nickname=new_nickname).first() is None:
-                break
+                return new_nickname
             version += 1
-        return new_nickname
 
     def is_authenticated(self):
         return True
