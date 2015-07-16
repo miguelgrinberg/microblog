@@ -28,11 +28,11 @@ def get_locale():
 @app.before_request
 def before_request():
     g.user = current_user
+    g.search_form = SearchForm()
     if g.user.is_authenticated():
         g.user.last_seen = datetime.utcnow()
         db.session.add(g.user)
         db.session.commit()
-        g.search_form = SearchForm()
     g.locale = get_locale()
 
 
