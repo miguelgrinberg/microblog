@@ -28,7 +28,7 @@ def get_locale():
 @app.before_request
 def before_request():
     g.user = current_user
-    if g.user.is_authenticated():
+    if g.user.is_authenticated:
         g.user.last_seen = datetime.utcnow()
         db.session.add(g.user)
         db.session.commit()
@@ -84,7 +84,7 @@ def index(page=1):
 @app.route('/login', methods=['GET', 'POST'])
 @oid.loginhandler
 def login():
-    if g.user is not None and g.user.is_authenticated():
+    if g.user is not None and g.user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():

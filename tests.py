@@ -37,9 +37,9 @@ class TestCase(unittest.TestCase):
         u = User(nickname='john', email='john@example.com')
         db.session.add(u)
         db.session.commit()
-        assert u.is_authenticated() is True
-        assert u.is_active() is True
-        assert u.is_anonymous() is False
+        assert u.is_authenticated is True
+        assert u.is_active is True
+        assert u.is_anonymous is False
         assert u.id == int(u.get_id())
 
     def test_avatar(self):
