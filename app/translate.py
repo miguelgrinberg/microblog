@@ -8,7 +8,7 @@ except ImportError:
     from urllib.parse import urlencode  # Python 3
 import json
 from app import app
-from flask.ext.babel import gettext
+from flask_babel import gettext
 from config import MS_TRANSLATOR_CLIENT_ID, MS_TRANSLATOR_CLIENT_SECRET
 
 

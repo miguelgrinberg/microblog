@@ -1,11 +1,11 @@
 import os
 from flask import Flask
 from flask.json import JSONEncoder
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.login import LoginManager
-from flask.ext.openid import OpenID
-from flask.ext.mail import Mail
-from flask.ext.babel import Babel, lazy_gettext
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+from flask_openid import OpenID
+from flask_mail import Mail
+from flask_babel import Babel, lazy_gettext
 from config import basedir, ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, \
     MAIL_PASSWORD
 from .momentjs import momentjs

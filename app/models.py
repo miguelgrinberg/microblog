@@ -10,7 +10,7 @@ if sys.version_info >= (3, 0):
 else:
     enable_search = WHOOSH_ENABLED
     if enable_search:
-        import flask.ext.whooshalchemy as whooshalchemy
+        import flask_whooshalchemy
 
 
 followers = db.Table(

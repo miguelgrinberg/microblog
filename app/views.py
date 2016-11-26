@@ -1,9 +1,8 @@
 from flask import render_template, flash, redirect, session, url_for, request, \
     g, jsonify
-from flask.ext.login import login_user, logout_user, current_user, \
-    login_required
-from flask.ext.sqlalchemy import get_debug_queries
-from flask.ext.babel import gettext
+from flask_login import login_user, logout_user, current_user, login_required
+from flask_sqlalchemy import get_debug_queries
+from flask_babel import gettext
 from datetime import datetime
 from guess_language import guessLanguage
 from app import app, db, lm, oid, babel
