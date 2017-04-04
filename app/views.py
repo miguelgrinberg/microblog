@@ -79,6 +79,14 @@ def index(page=1):
                            form=form,
                            posts=posts)
 
+@app.route('/allposts', methods=['GET', 'POST'])
+def allposts():
+    form = PostForm()
+    posts = Post.query.all()
+    return render_template('allposts.html',
+                           title='allposts',
+                           form=form,
+                           posts=posts)
 
 @app.route('/login', methods=['GET', 'POST'])
 @oid.loginhandler
