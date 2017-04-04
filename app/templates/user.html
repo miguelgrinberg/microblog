@@ -3,7 +3,7 @@
 
 {% block content %}
     {% include 'flash.html' %}
-    <div class="well well-large" style="height: 140px;">
+    <div class="well well-large" style="height: 190px;">
         <div class="pull-right">
             <img src="{{ user.avatar(128) }}" class="img-polaroid">
         </div>
@@ -12,6 +12,7 @@
         {% if user.last_seen %}
         <p><em>{{ _('Last seen:') }} {{ momentjs(user.last_seen).calendar() }}</em></p>
         {% endif %}
+		<p> number of posts written: {{ user.posts.count() }} </p>
         <p>{{ _('Followers:') }} {{ user.followers.count() - 1 }} | {{ _('Following:') }} {{ user.followed.count() - 1 }} |
         {% if user.id == g.user.id %}
             <a href="{{ url_for('edit') }}">{{ _('Edit your profile') }}</a>
