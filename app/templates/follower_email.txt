@@ -6,4 +6,4 @@
 
 {{ _('Regards,') }}
 
-{{ _('The microblog admin') }}
+{{ _('The forum admin') }}

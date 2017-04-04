@@ -4,7 +4,7 @@
     {% if title %}
     <title>{{ title }} - Forum </title>
     {% else %}
-    <title>microblog</title>
+    <title>Forum</title>
     {% endif %}
     <link href="{{ url_for('.static', filename='css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
     <link href="{{ url_for('.static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet">
@@ -44,7 +44,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="{{ url_for('index') }}">microblog</a>
+          <a class="brand" href="{{ url_for('index') }}"> Forum </a>
             <ul class="nav">
               <li><a href="{{ url_for('index') }}">{{ _('Home') }}</a></li>
               <li><a href="{{ url_for('allposts') }}">{{ _('Most Recent Posts') }}</a></li>
