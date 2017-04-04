@@ -47,6 +47,7 @@
           <a class="brand" href="{{ url_for('index') }}">microblog</a>
             <ul class="nav">
               <li><a href="{{ url_for('index') }}">{{ _('Home') }}</a></li>
+              <li><a href="{{ url_for('allposts') }}">{{ _('Most Recent Posts') }}</a></li>
               {% if g.user.is_authenticated %}
               <li><a href="{{ url_for('user', nickname=g.user.nickname) }}">{{ _('Your Profile') }}</a></li>
               <li><a href="{{ url_for('logout') }}">{{ _('Logout') }}</a></li>
