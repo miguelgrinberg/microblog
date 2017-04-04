@@ -82,7 +82,7 @@ def index(page=1):
 @app.route('/allposts', methods=['GET', 'POST'])
 def allposts():
     form = PostForm()
-    posts = Post.query.limit(3)
+    posts = Post.query.order_by(Post.timestamp.desc()).limit(3)
     return render_template('allposts.html',
                            title='allposts',
                            form=form,
