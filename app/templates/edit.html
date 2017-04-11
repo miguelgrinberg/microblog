@@ -16,6 +16,14 @@
                     {% endfor %}
                 </div>
             </div>
+            <div class="control-group{% if form.location.errors %} error{% endif %}">
+                <label class="control-label" for="location">{{ _('location:') }}</label>
+                <div class="controls">
+                    {{ form.location(cols=64, rows=4, class="span4") }}
+                    {% for error in form.location.errors %}
+                        <span class="help-inline">[{{ error }}]</span><br>
+                    {% endfor %}
+                </div>
             <div class="control-group{% if form.about_me.errors %} error{% endif %}">
                 <label class="control-label" for="about_me">{{ _('About yourself:') }}</label>
                 <div class="controls">

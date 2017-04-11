@@ -156,6 +156,7 @@ def edit():
     form = EditForm(g.user.nickname)
     if form.validate_on_submit():
         g.user.nickname = form.nickname.data
+        g.user.location = form.location.data
         g.user.about_me = form.about_me.data
         db.session.add(g.user)
         db.session.commit()
@@ -163,6 +164,7 @@ def edit():
         return redirect(url_for('edit'))
     elif request.method != "POST":
         form.nickname.data = g.user.nickname
+        form.location.data = g.user.location
         form.about_me.data = g.user.about_me
     return render_template('edit.html', form=form)
 

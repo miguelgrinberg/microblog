@@ -8,6 +8,7 @@
             <img src="{{ user.avatar(128) }}" class="img-polaroid">
         </div>
         <h1>{{ user.nickname }}</h1>
+        {% if user.location %}<p>{{ user.location }}</p>{% endif %}
         {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
         {% if user.last_seen %}
         <p><em>{{ _('Last login:') }} {{ momentjs(user.last_seen).calendar() }}</em></p>
