@@ -1,5 +1,10 @@
 """
-Module provides OAuth signin for Twitter, Facebook and Google.  Somewhat hacked together as a learning exercise.
+Module provides OAuth signin for Twitter, Facebook and Google. This was done as a learning exercise to add 
+Google OAuth, but may be useful to current microblog tutorial followers looking to implement OAuth instead of OpenID.
+
+Credit to Miguel Grinberg's Flask/OAuth tutorial, most of the code and knowledge came from here:
+
+https://blog.miguelgrinberg.com/post/oauth-authentication-with-flask
 """
 
 from rauth import OAuth1Service, OAuth2Service
