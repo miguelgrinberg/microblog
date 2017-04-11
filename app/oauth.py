@@ -1,10 +1,15 @@
+"""
+Module provides OAuth signin for Twitter, Facebook and Google.  Somewhat hacked together as a learning exercise.
+"""
+
 from rauth import OAuth1Service, OAuth2Service
 from flask import flash, current_app, url_for, request, redirect, session, jsonify
 import json, urllib2
 
 class OAuthSignIn(object):
     providers = None
-
+    
+    # Provider Name, ID and Secret are needed here.  Pull in from config.
     def __init__(self, provider_name):
         self.provider_name = provider_name
         credentials = current_app.config['OAUTH_CREDENTIALS'][provider_name]
