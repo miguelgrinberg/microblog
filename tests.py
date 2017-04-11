@@ -168,6 +168,14 @@ class TestCase(unittest.TestCase):
         assert microsoft_translate(u'Español', 'es', 'en') == u'Spanish'
 
 
+    def test_make_about_me(self):
+        u = User(nickname='juan', about_me='human')
+        db.session.add(u)
+        db.session.commit()
+        checkuser1 = User.query.filter_by(nickname='juan').one()
+        expected = 'human'
+        assert checkuser1.about_me == expected
+
 if __name__ == '__main__':
     try:
         unittest.main()
