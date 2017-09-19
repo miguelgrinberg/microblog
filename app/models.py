@@ -110,4 +110,4 @@ class Post(db.Model):
 
 
 if enable_search:
-    whooshalchemy.whoosh_index(app, Post)
+    flask_whooshalchemy.whoosh_index(app, Post)
