@@ -6,6 +6,7 @@ chardet==3.0.4
 click==6.7
 dnspython==2.1.0
 dominate==2.3.1
+elasticsearch==7.10.1
 email-validator==1.1.2
 Flask==1.1.2
 Flask-Babel==2.0.0
