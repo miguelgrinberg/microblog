@@ -6,7 +6,7 @@
     {% if title %}
     <title>{{ title }} - Microblog</title>
     {% else %}
-    <title>Welcome to Microblog</title>
+    <title>{{ _('Welcome to Microblog') }}</title>
     {% endif %}
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -24,23 +24,23 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="{{ url_for('index') }}">Home</a>
+              <a class="nav-link" aria-current="page" href="{{ url_for('index') }}">{{ _('Home') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="{{ url_for('explore') }}">Explore</a>
+              <a class="nav-link" aria-current="page" href="{{ url_for('explore') }}">{{ _('Explore') }}</a>
             </li>
           </ul>
           <ul class="navbar-nav mb-2 mb-lg-0">
             {% if current_user.is_anonymous %}
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="{{ url_for('login') }}">Login</a>
+              <a class="nav-link" aria-current="page" href="{{ url_for('login') }}">{{ _('Login') }}</a>
             </li>
             {% else %}
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="{{ url_for('user', username=current_user.username) }}">Profile</a>
+              <a class="nav-link" aria-current="page" href="{{ url_for('user', username=current_user.username) }}">{{ _('Profile') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="{{ url_for('logout') }}">Logout</a>
+              <a class="nav-link" aria-current="page" href="{{ url_for('logout') }}">{{ _('Logout') }}</a>
             </li>
             {% endif %}
           </ul>
@@ -63,5 +63,6 @@
         crossorigin="anonymous">
     </script>
     {{ moment.include_moment() }}
+    {{ moment.lang(g.locale) }}
   </body>
 </html>
