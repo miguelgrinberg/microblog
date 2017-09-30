@@ -5,18 +5,18 @@
         <tr>
             <td width="256px"><img src="{{ user.avatar(256) }}"></td>
             <td>
-                <h1>User: {{ user.username }}</h1>
+                <h1>{{ _('User') }}: {{ user.username }}</h1>
                 {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
                 {% if user.last_seen %}
-                <p>Last seen on: {{ moment(user.last_seen).format('LLL') }}</p>
+                <p>{{ _('Last seen on') }}: {{ moment(user.last_seen).format('LLL') }}</p>
                 {% endif %}
-                <p>{{ user.followers.count() }} followers, {{ user.followed.count() }} following.</p>
+                <p>{{ _('%(count)d followers', count=user.followers.count()) }}, {{ _('%(count)d following', count=user.followed.count()) }}</p>
                 {% if user == current_user %}
-                <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+                <p><a href="{{ url_for('edit_profile') }}">{{ _('Edit your profile') }}</a></p>
                 {% elif not current_user.is_following(user) %}
-                <p><a href="{{ url_for('follow', username=user.username) }}">Follow</a></p>
+                <p><a href="{{ url_for('follow', username=user.username) }}">{{ _('Follow') }}</a></p>
                 {% else %}
-                <p><a href="{{ url_for('unfollow', username=user.username) }}">Unfollow</a></p>
+                <p><a href="{{ url_for('unfollow', username=user.username) }}">{{ _('Unfollow') }}</a></p>
                 {% endif %}
             </td>
         </tr>
@@ -28,12 +28,12 @@
         <ul class="pager">
             <li class="previous{% if not prev_url %} disabled{% endif %}">
                 <a href="{{ prev_url or '#' }}">
-                    <span aria-hidden="true">&larr;</span> Newer posts
+                    <span aria-hidden="true">&larr;</span> {{ _('Newer posts') }}
                 </a>
             </li>
             <li class="next{% if not next_url %} disabled{% endif %}">
                 <a href="{{ next_url or '#' }}">
-                    Older posts <span aria-hidden="true">&rarr;</span>
+                    {{ _('Older posts') }} <span aria-hidden="true">&rarr;</span>
                 </a>
             </li>
         </ul>
