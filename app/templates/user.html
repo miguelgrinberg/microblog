@@ -5,26 +5,26 @@
         <tr>
             <td width="256px"><img src="{{ user.avatar(256) }}"></td>
             <td>
-                <h1>User: {{ user.username }}</h1>
+                <h1>{{ _('User') }}: {{ user.username }}</h1>
                 {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
                 {% if user.last_seen %}
-                <p>Last seen on: {{ moment(user.last_seen).format('LLL') }}</p>
+                <p>{{ _('Last seen on') }}: {{ moment(user.last_seen).format('LLL') }}</p>
                 {% endif %}
-                <p>{{ user.followers_count() }} followers, {{ user.following_count() }} following.</p>
+                <p>{{ _('%(count)d followers', count=user.followers_count()) }}, {{ _('%(count)d following', count=user.following_count()) }}</p>
                 {% if user == current_user %}
-                <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+                <p><a href="{{ url_for('edit_profile') }}">{{ _('Edit your profile') }}</a></p>
                 {% elif not current_user.is_following(user) %}
                 <p>
                     <form action="{{ url_for('follow', username=user.username) }}" method="post">
                         {{ form.hidden_tag() }}
-                        {{ form.submit(value='Follow', class_='btn btn-primary') }}
+                        {{ form.submit(value=_('Follow'), class_='btn btn-primary') }}
                     </form>
                 </p>
                 {% else %}
                 <p>
                     <form action="{{ url_for('unfollow', username=user.username) }}" method="post">
                         {{ form.hidden_tag() }}
-                        {{ form.submit(value='Unfollow', class_='btn btn-primary') }}
+                        {{ form.submit(value=_('Unfollow'), class_='btn btn-primary') }}
                     </form>
                 </p>
                 {% endif %}
@@ -38,12 +38,12 @@
         <ul class="pagination">
             <li class="page-item{% if not prev_url %} disabled{% endif %}">
                 <a class="page-link" href="{{ prev_url }}">
-                    <span aria-hidden="true">&larr;</span> Newer posts
+                    <span aria-hidden="true">&larr;</span> {{ _('Newer posts') }}
                 </a>
             </li>
             <li class="page-item{% if not next_url %} disabled{% endif %}">
                 <a class="page-link" href="{{ next_url }}">
-                    Older posts <span aria-hidden="true">&rarr;</span>
+                    {{ _('Older posts') }} <span aria-hidden="true">&rarr;</span>
                 </a>
             </li>
         </ul>
