@@ -11,6 +11,7 @@ email-validator==1.1.2
 Flask==1.1.2
 Flask-Babel==2.0.0
 Flask-Bootstrap==3.3.7.1
+Flask-HTTPAuth==4.2.0
 Flask-Login==0.5.0
 Flask-Mail==0.9.1
 Flask-Migrate==2.5.3
