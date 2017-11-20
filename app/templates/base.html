@@ -65,6 +65,19 @@
       </div>
     </nav>
     <div class="container mt-3">
+      {% if current_user.is_authenticated %}
+      {% with tasks = current_user.get_tasks_in_progress() %}
+      {% if tasks %}
+        {% for task in tasks %}
+        <div class="alert alert-success" role="alert">
+          {{ task.description }}
+          <span id="{{ task.id }}-progress">{{ task.get_progress() }}</span>%
+        </div>
+        {% endfor %}
+      {% endif %}
+      {% endwith %}
+      {% endif %}
+
       {% with messages = get_flashed_messages() %}
       {% if messages %}
         {% for message in messages %}
@@ -134,6 +147,13 @@
         count.style.visibility = n ? 'visible' : 'hidden';
       }
 
+      function set_task_progress(task_id, progress) {
+        const progressElement = document.getElementById(task_id + '-progress');
+        if (progressElement) {
+          progressElement.innerText = progress;
+        }
+      }
+
       {% if current_user.is_authenticated %}
       function initialize_notifications() {
         let since = 0;
@@ -141,8 +161,15 @@
           const response = await fetch('{{ url_for('main.notifications') }}?since=' + since);
           const notifications = await response.json();
           for (let i = 0; i < notifications.length; i++) {
-            if (notifications[i].name == 'unread_message_count')
-              set_message_count(notifications[i].data);
+            switch (notifications[i].name) {
+              case 'unread_message_count':
+                set_message_count(notifications[i].data);
+                break;
+              case 'task_progress':
+                set_task_progress(notifications[i].data.task_id,
+                    notifications[i].data.progress);
+                break;
+            }
             since = notifications[i].timestamp;
           }
         }, 10000);
