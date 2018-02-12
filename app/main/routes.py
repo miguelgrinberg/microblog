@@ -38,9 +38,9 @@ def index():
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(
         page, current_app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('main.explore', page=posts.next_num) \
+    next_url = url_for('main.index', page=posts.next_num) \
         if posts.has_next else None
-    prev_url = url_for('main.explore', page=posts.prev_num) \
+    prev_url = url_for('main.index', page=posts.prev_num) \
         if posts.has_prev else None
     return render_template('index.html', title=_('Home'), form=form,
                            posts=posts.items, next_url=next_url,
