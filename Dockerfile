@@ -5,6 +5,11 @@ RUN adduser -D microblog
 WORKDIR /home/microblog
 
 COPY requirements.txt requirements.txt
+
+RUN apk update \
+    && apk add libpq postgresql-dev \
+    && apk add build-base
+
 RUN python -m venv venv
 RUN venv/bin/pip install -r requirements.txt
 RUN venv/bin/pip install gunicorn pymysql
