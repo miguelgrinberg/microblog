@@ -4,8 +4,10 @@ RUN adduser -D microblog
 
 WORKDIR /home/microblog
 
+RUN apk add --update --no-cache gcc libc-dev libffi-dev libressl-dev
 COPY requirements.txt requirements.txt
 RUN python -m venv venv
+RUN venv/bin/pip install --upgrade pip
 RUN venv/bin/pip install -r requirements.txt
 RUN venv/bin/pip install gunicorn pymysql
 
