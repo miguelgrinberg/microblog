@@ -1,7 +1,7 @@
 import json
 import sys
 import time
-from flask import render_template
+from flask import render_template, current_app
 from rq import get_current_job
 from app import create_app, db
 from app.models import User, Post, Task
@@ -39,7 +39,7 @@ def export_posts(user_id):
             _set_task_progress(100 * i // total_posts)
 
         send_email('[Microblog] Your blog posts',
-                sender=app.config['ADMINS'][0], recipients=[user.email],
+                sender=current_app.config['ADMINS'][0], recipients=[user.email],
                 text_body=render_template('email/export_posts.txt', user=user),
                 html_body=render_template('email/export_posts.html',
                                           user=user),
