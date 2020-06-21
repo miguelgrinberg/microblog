@@ -1,0 +1,12 @@
+tasks:
+  - before: |
+      export FLASK_APP=microblog.py
+    init: |
+      pip install setuptools==45 # see https://github.com/pypa/setuptools/issues/2017#issuecomment-605354361
+      pip install -r ./requirements.txt
+      flask db upgrade
+    command: |
+      flask run
+ports:
+  - port: 5000
+    onOpen: open-preview
