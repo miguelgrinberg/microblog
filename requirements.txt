@@ -21,7 +21,7 @@ idna==2.6
 itsdangerous==0.24
 Jinja2==2.10
 Mako==1.0.7
-MarkupSafe==1.0
+MarkupSafe==1.1.1
 PyJWT==1.5.3
 python-dateutil==2.6.1
 python-dotenv==0.7.1
