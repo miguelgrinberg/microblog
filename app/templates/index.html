@@ -2,7 +2,12 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
+    {% if current_user.is_anonymous %}
+    <h1>Hi!</h1>
+    <p>You're not logged. Maybe you want to <a href="{{ url_for('login') }}">login</a> or <a href="{{ url_for('register') }}">register</a>?</p>
+    {% else %}
     <h1>Hi, {{ current_user.username }}!</h1>
+    {% endif %}
     {% if form %}
     {{ wtf.quick_form(form) }}
     <br>

@@ -18,8 +18,12 @@ def before_request():
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def index():
+
+    if not current_user.is_authenticated:
+        return redirect(url_for('explore'))
+
     form = PostForm()
     if form.validate_on_submit():
         post = Post(body=form.post.data, author=current_user)
@@ -40,7 +44,7 @@ def index():
 
 
 @app.route('/explore')
-@login_required
+# @login_required
 def explore():
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
@@ -124,7 +128,7 @@ def reset_password(token):
 
 
 @app.route('/user/<username>')
-@login_required
+# @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
