@@ -1,6 +1,6 @@
 #!/bin/sh
-# this script is used to boot a Docker container
-# source venv/bin/activate
+
+# cette partie sert à effectuer des opérations sur la base de données si nécessaires
 while true; do
     flask db upgrade
     if [[ "$?" == "0" ]]; then
@@ -10,4 +10,12 @@ while true; do
     sleep 5
 done
 
-exec gunicorn -b :5000 --access-logfile - --error-logfile - microblog:app
+# cette partie permet de faire varier l'environnement du container
+set -e
+if [ "$APP_ENVIRONMENT" = 'DEV' ]; then
+    echo "Running Development Server"
+    exec flask run -h 0.0.0.0
+else
+    echo "Running Production Server"
+    exec gunicorn -b :5000 --access-logfile - --error-logfile - microblog:app
+fi
