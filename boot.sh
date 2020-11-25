@@ -2,8 +2,7 @@
 
 # cette partie sert à effectuer des opérations sur la base de données si nécessaires
 while true; do
-    flask db upgrade
-    if [[ "$?" == "0" ]]; then
+    if flask db upgrade; then
         break
     fi
     echo Deploy command failed, retrying in 5 secs...
