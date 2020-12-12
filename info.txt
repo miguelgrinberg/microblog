@@ -1,0 +1,59 @@
+
+
+Exchange Object
+* id
+* exchange name # binance only at first
+* api_key
+* api_secret
+* enabled
+
+Trade Object
+* id # internal id of trade object
+* exchange id
+* stoploss
+    * price
+    * type #limit, conditional
+    * delay # immediate or candle close
+* volume # amount of coins to buy, OR
+* amount # amount of BTC to spend for this trade
+* entry # should be able to add funds at multiple levels
+    * max 4 multiple levels
+    * ability to add funds after initial object creation
+    * ability to open immidiatelly so limit->market
+* target1 # limit, entered after entree is bought
+    * order id
+    * price
+    * percentage
+    * ability to create or change after initial object creation
+* target2 # limit
+    * order id
+    * price
+    * percentage
+    * ability to create or change after initial object creation
+* target3 # limit
+    * order id
+    * price
+    * percentage
+    * ability to create or change after initial object creation
+* target4 # limit
+    * order id
+    * price
+    * percentage
+    * ability to create or change after initial object creation
+* close at market price (panic sell)
+
+
+Order Object
+* id # internal id of order object
+* order_id # order_id at the exchange
+* timestamp_entered
+* side # buy, sell
+* type  # market, limit, conditional
+* price # wanted price
+* volume # wanted volume
+* remaining # remaining volume of partially executed order
+* status # open, finished, partial
+* timestamp_completed
+
+
+
