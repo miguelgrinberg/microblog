@@ -62,6 +62,11 @@ def explore():
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
+@bp.route('/trade')
+@login_required
+def trade():
+    return render_template('trade.html', title=_('Trade'))
+
 
 @bp.route('/user/<username>')
 @login_required

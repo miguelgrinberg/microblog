@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<h1>{{ _('Trade') }}</h1>
+ <div class="btn-group btn-group-toggle" data-toggle="buttons">
+  <label class="btn btn-secondary active">
+    <input type="radio" name="options" id="limit" autocomplete="off" checked> Limit
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="market" autocomplete="off"> Market
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="cond." autocomplete="off"> Cond.
+  </label>
+ </div>
+ <form>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Ticker</label>
+    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="ETHBTC">
+    <small id="emailHelp" class="form-text text-muted">Please enter a symbol</small>
+  </div>
+ </form>
+{% endblock %}
