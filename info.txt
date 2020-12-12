@@ -16,11 +16,11 @@ Trade Object
     * delay # immediate or candle close
 * volume # amount of coins to buy, OR
 * amount # amount of BTC to spend for this trade
-* entry # should be able to add funds at multiple levels
+* entry # should be able to add funds at multiple levels, even after initial buy order is filled
     * max 4 multiple levels
     * ability to add funds after initial object creation
     * ability to open immidiatelly so limit->market
-* target1 # limit, entered after entree is bought
+* target1 # limit, entered buy order is filled
     * order id
     * price
     * percentage
@@ -41,6 +41,7 @@ Trade Object
     * percentage
     * ability to create or change after initial object creation
 * close at market price (panic sell)
+* ability to half volume, as to free up funds for other trades
 
 
 Order Object
