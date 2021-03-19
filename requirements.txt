@@ -21,7 +21,7 @@ Flask-WTF==0.14.3
 guess-language-spirit==0.5.3
 idna==2.6
 itsdangerous==0.24
-Jinja2==2.11.2
+Jinja2==2.11.3
 Mako==1.0.7
 MarkupSafe==1.1.1
 PyJWT==1.5.3
