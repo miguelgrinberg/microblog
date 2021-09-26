@@ -11,9 +11,9 @@ done
 
 # cette partie permet de faire varier l'environnement du container
 set -e
-if [ "$APP_ENVIRONMENT" = 'DEV' ]; then
+if [ "$CONTEXT" = 'DEV' ]; then
     echo "Running Development Server"
-    exec flask run -h 0.0.0.0
+    FLASK_ENV=development exec flask run -h 0.0.0.0
 else
     echo "Running Production Server"
     exec gunicorn -b :5000 --access-logfile - --error-logfile - microblog:app
