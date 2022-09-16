@@ -24,7 +24,7 @@ idna==2.10
 itsdangerous==2.0.1
 Jinja2==3.0.1
 langdetect==1.0.9
-Mako==1.1.4
+Mako==1.2.2
 MarkupSafe==2.0.1
 Pygments==2.9.0
 PyJWT==2.1.0
