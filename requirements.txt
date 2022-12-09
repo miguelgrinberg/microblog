@@ -1,7 +1,7 @@
 alembic==1.6.5
 Babel==2.9.1
 blinker==1.4
-certifi==2021.5.30
+certifi==2022.12.7
 chardet==4.0.0
 click==8.0.1
 dnspython==2.1.0
