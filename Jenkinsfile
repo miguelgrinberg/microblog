@@ -4,8 +4,10 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'echo building...'
-        sh 'docker run -p 5000:5000 microblog:latest'
+        node {
+          checkout scm
+          def customImage = docker.build("microblog:latest")
+        }
       }
     }
 
