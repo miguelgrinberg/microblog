@@ -11,7 +11,7 @@ pipeline {
 
     stage('Build') {
       steps {
-        sh 'docker build -t microblog:latest .'
+        sh 'sudo docker build -t microblog:latest .'
       }
     }
 
