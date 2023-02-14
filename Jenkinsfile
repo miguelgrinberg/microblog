@@ -1,10 +1,10 @@
 pipeline {
-  agent any 
+  agent { dockerfile true }
 
   stages {
     stage('Build') {
       steps {
-        sh 'sudo docker build -t microblog:latest .'
+        sh 'echo building...'
       }
     }
 
