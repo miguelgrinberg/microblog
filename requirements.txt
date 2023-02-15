@@ -18,7 +18,7 @@ Flask-Migrate==3.0.1
 Flask-Moment==1.0.1
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==0.15.1
-#greenlet==1.1.0
+greenlet==1.1.0
 httpie==2.4.0
 idna==2.10
 itsdangerous==2.0.1
