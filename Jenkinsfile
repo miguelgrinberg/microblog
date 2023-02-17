@@ -1,5 +1,9 @@
-node {
-    checkout scm
-
-    def customImage = docker.build("microblog:latest")
+pipeline {
+    agent any
+    
+    stages {
+        stage('Build') {
+            sh 'docker build -t microblog:latest .'
+        }
+    }
 }
