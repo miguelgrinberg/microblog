@@ -10,7 +10,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 // Stop running microblog container
-                sh 'if [[ $(docker ps -q --filter ancestor=microblog:latest | wc -l) != 0 ]]; then docker stop $(docker ps -q --filter ancestor=microblog:latest) fi'
+                //sh 'if [[ $(docker ps -q --filter ancestor=microblog:latest | wc -l) != 0 ]]; then docker stop $(docker ps -q --filter ancestor=microblog:latest) fi'
+                sh 'docker stop $(docker ps -q --filter ancestor=microblog:latest) || true && docker rm $(docker ps -q --filter ancestor=microblog:latest) || true'
                 // Deploy new container
                 sh 'docker run -d -p 5000:5000 microblog:latest'
             }
