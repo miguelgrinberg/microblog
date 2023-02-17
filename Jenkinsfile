@@ -12,7 +12,7 @@ pipeline {
                 // Stop running microblog container
                 sh 'docker stop $(docker ps -q --filter ancestor=microblog:latest)'
                 // Deploy new container
-                sh 'docker run -d -p 5000:5000 microblog:latest
+                sh 'docker run -d -p 5000:5000 microblog:latest'
             }
         }
         stage('Hello To Discord') {
