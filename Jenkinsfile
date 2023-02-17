@@ -7,7 +7,15 @@ pipeline {
                 sh 'docker build -t microblog:latest .'   
             }
         }
-        stage("Hello To Discord") {
+        stage('Deploy') {
+            steps {
+                // Stop running microblog container
+                sh 'docker stop $(docker ps -q --filter ancestor=microblog:latest)'
+                // Deploy new container
+                sh 'docker run -d -p 5000:5000 microblog:latest
+            }
+        }
+        stage('Hello To Discord') {
             steps {
                 echo ' Test to Discord'
                 discordSend description: '', footer: '', image: '', link: 'http://3.91.14.163:8080', result: '', scmWebUrl: '', thumbnail: '', title: 
