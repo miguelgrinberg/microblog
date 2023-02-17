@@ -3,7 +3,9 @@ pipeline {
     
     stages {
         stage('Build') {
-            sh 'docker build -t microblog:latest .'
+            steps {
+                sh 'docker build -t microblog:latest .'   
+            }
         }
     }
 }
