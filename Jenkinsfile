@@ -29,7 +29,7 @@ pipeline {
             }
         }
     }
-        post {
+    post {
         success {
             echo 'Pipeline has completed'
              discordSend description: '', footer: '', image: '', link: 'http://3.91.14.163:8080', result: '', scmWebUrl: '', thumbnail: '', title: 
