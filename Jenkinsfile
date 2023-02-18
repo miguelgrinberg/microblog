@@ -22,7 +22,6 @@ pipeline {
                 //sh 'python3 selenium.py'
             }
         }
-        stage('Hello To Discord') {
             steps {
                 echo 'PipelineComplete'
                 discordSend description: '', footer: '', image: '', link: 'http://3.91.14.163:8080', result: '', scmWebUrl: '', thumbnail: '', title: 
