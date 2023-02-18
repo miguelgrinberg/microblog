@@ -18,6 +18,7 @@ pipeline {
         }
         stage('Selenium Tests') {
             steps {
+                echo 'Running Selenium Tests...'
                 //sh 'python3 selenium.py'
             }
         }
