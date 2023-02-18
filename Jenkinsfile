@@ -11,6 +11,8 @@ pipeline {
             steps {
                 // Stop running microblog container
                 sh 'docker stop $(docker ps -q --filter ancestor=microblog:latest) || true && docker rm $(docker ps -q --filter ancestor=microblog:latest) || true'
+                // Prune old containers that are not running
+                sh 'docker container prune'
                 // Deploy new container
                 sh 'docker run --name microblog -d -p 5000:5000 --rm microblog:latest'
             }
