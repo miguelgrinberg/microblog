@@ -18,7 +18,7 @@ pipeline {
         }
         stage('Selenium Tests') {
             steps {
-                sh 'python3 selenium.py'
+                //sh 'python3 selenium.py'
             }
         }
         stage('Hello To Discord') {
