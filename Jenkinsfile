@@ -22,6 +22,8 @@ pipeline {
             }
         }
     }
+    
+    // Post always runs even if the pipeline fails
     post {
         success {
             echo 'Pipeline has completed'
