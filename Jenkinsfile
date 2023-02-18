@@ -10,7 +10,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 // Stop running microblog container
-                //sh 'if [[ $(docker ps -q --filter ancestor=microblog:latest | wc -l) != 0 ]]; then docker stop $(docker ps -q --filter ancestor=microblog:latest) fi'
                 sh 'docker stop $(docker ps -q --filter ancestor=microblog:latest) || true && docker rm $(docker ps -q --filter ancestor=microblog:latest) || true'
                 // Deploy new container
                 sh 'docker run --name microblog -d -p 5000:5000 --rm microblog:latest'
@@ -20,12 +19,6 @@ pipeline {
             steps {
                 echo 'Running Selenium Tests...'
                 //sh 'python3 selenium.py'
-            }
-        }
-            steps {
-                echo 'PipelineComplete'
-                discordSend description: '', footer: '', image: '', link: 'http://3.91.14.163:8080', result: '', scmWebUrl: '', thumbnail: '', title: 
-                'HelloToDiscordTest', webhookURL: 'https://discord.com/api/webhooks/1075879011667955872/Nk0gmKZkrISEs-hru-HjtzzgezWweABCdPsOKGIzkmj5xMcqKC3m1-dx7GZSu0yURAOo'
             }
         }
     }
