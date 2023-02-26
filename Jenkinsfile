@@ -7,6 +7,12 @@ pipeline {
                 sh 'docker build -t microblog:latest .'   
             }
         }
+        stage('Selenium Tests') {
+            steps {
+                echo 'Running Selenium Tests...'
+                //sh 'python3 selenium.py'
+            }
+        }
         stage('Deploy') {
             steps {
                 // Stop running microblog container
@@ -15,12 +21,6 @@ pipeline {
                 sh 'docker run --name microblog -d -p 5000:5000 --rm microblog:latest'
                 // Remove all images except for jenkins
                 sh 'docker image prune --filter "label!=org.opencontainers.image.vendor=Jenkins project"'
-            }
-        }
-        stage('Selenium Tests') {
-            steps {
-                echo 'Running Selenium Tests...'
-                //sh 'python3 selenium.py'
             }
         }
     }
