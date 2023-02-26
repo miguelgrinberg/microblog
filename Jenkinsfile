@@ -13,7 +13,7 @@ pipeline {
                 sh 'docker stop $(docker ps -q --filter ancestor=microblog:latest) || true && docker rm $(docker ps -q --filter ancestor=microblog:latest) || true'
                 // Deploy new container
                 sh 'docker run --name microblog -d -p 5000:5000 --rm microblog:latest'
-                // Remove all images that don't have a container running them
+                // Remove all images except for jenkins
                 sh 'docker image prune --filter "label!=org.opencontainers.image.vendor=Jenkins project"'
             }
         }
