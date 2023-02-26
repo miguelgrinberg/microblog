@@ -14,7 +14,7 @@ pipeline {
                 // Deploy new container
                 sh 'docker run --name microblog -d -p 5000:5000 --rm microblog:latest'
                 // Remove all images that don't have a container running them
-                sh 'docker image prune --filter "label=org.opencontainers.image.vendor=Jenkins project"'
+                sh 'docker image prune --filter "label!=org.opencontainers.image.vendor=Jenkins project"'
             }
         }
         stage('Selenium Tests') {
