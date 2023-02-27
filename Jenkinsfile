@@ -18,7 +18,7 @@ pipeline {
                 // Deploy new container
                 sh 'docker run --name microblog -d -p 5000:5000 --rm microblog:latest'
                 // Remove all images except for jenkins
-                sh 'docker image prune -a --filter "label!=org.opencontainers.image.vendor=Jenkins project"'
+                sh 'docker image prune -af --filter "label!=org.opencontainers.image.vendor=Jenkins project"'
             }
         }
         stage('Selenium Tests') {
