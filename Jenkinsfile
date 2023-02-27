@@ -10,7 +10,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 // Stop running microblog container (microblog label applied to microblog container by this repo's Dockerfile)
-                sh 'docker stop $(docker ps -q --filter label=microblog) || true && docker rm $(docker ps -q --filter label=microblog) || true'
+                sh 'docker stop $(docker ps -q --filter name=microblog) || true && docker rm $(docker ps -q --filter name=microblog) || true'
                 // Deploy new container
                 sh 'docker run --name microblog -d -p 5000:5000 --rm microblog:latest'
                 // Remove all images except for jenkins
