@@ -6,19 +6,19 @@ pipeline {
             steps {
                 // Stop running microblog container (microblog label applied to microblog container by this repo's Dockerfile)
                 sh 'docker stop $(docker ps -q --filter name=microblog) || true && docker rm $(docker ps -q --filter name=microblog) || true'
-                // Remove all images except for jenkins
-                sh 'docker image prune -a --filter "label!=org.opencontainers.image.vendor=Jenkins project"'
             }
         }
         stage('Build') {
             steps {
-                sh 'docker build -t microblog:latest .'   
+                sh 'docker build -t microblog:latest .'
             }
         }
         stage('Deploy') {
             steps {
                 // Deploy new container
                 sh 'docker run --name microblog -d -p 5000:5000 --rm microblog:latest'
+                // Remove all images except for jenkins
+                sh 'docker image prune -a --filter "label!=org.opencontainers.image.vendor=Jenkins project"'
             }
         }
         stage('Selenium Tests') {
