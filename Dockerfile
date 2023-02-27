@@ -19,7 +19,5 @@ ENV FLASK_APP microblog.py
 RUN chown -R microblog:microblog ./
 USER microblog
 
-LABEL microblog
-
 EXPOSE 5000
 ENTRYPOINT ["./boot.sh"]
