@@ -4,12 +4,31 @@ from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
 
-
 class LoginForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     password = PasswordField(_l('Password'), validators=[DataRequired()])
     remember_me = BooleanField(_l('Remember Me'))
     submit = SubmitField(_l('Sign In'))
+
+
+class Confirm2faForm(FlaskForm):
+    token = StringField('Token')
+    submit = SubmitField('Verify')
+
+
+class Enable2faForm(FlaskForm):
+    verification_phone = StringField('Phone', validators=[DataRequired()])
+    submit = SubmitField('Enable 2FA')
+
+    def validate_verification_phone(self, verification_phone):
+        try:
+            return
+        except:
+            print("An exception occurred")
+
+
+class Disable2faForm(FlaskForm):
+    submit = SubmitField('Disable 2FA')
 
 
 class RegistrationForm(FlaskForm):

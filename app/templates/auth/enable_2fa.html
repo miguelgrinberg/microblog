@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>Enable Two-Factor Authentication</h1>
+    <p>Please enter your mobile number to activate two-factor authentication on your account.</p>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/css/intlTelInput.css">
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/js/intlTelInput-jquery.min.js"></script>
+    <script>
+        $("#verification_phone").css({position: 'absolute', top: '-9999px', left: '-9999px'});
+        $("#verification_phone").parent().append('<div><input type="tel" id="_verification_phone"></div>');
+        $("#_verification_phone").intlTelInput({
+            separateDialCode: true,
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/16.0.4/js/utils.js",
+        });
+        $("#_verification_phone").intlTelInput("setNumber", $('#verification_phone').val());
+        $('#_verification_phone').blur(function() {
+            $('#verification_phone').val($('#_verification_phone').intlTelInput("getNumber"));
+        });
+    </script>
+{% endblock %}
