@@ -38,6 +38,8 @@ requests==2.25.1
 requests-toolbelt==0.9.1
 rq==1.9.0
 selenium
+behave
+webdriver_manager
 six==1.16.0
 SQLAlchemy==1.4.20
 urllib3==1.26.6

@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+import sys
+sys.path.append('./')
+
 from datetime import datetime, timedelta
 import unittest
 from app import create_app, db
