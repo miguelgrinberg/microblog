@@ -22,6 +22,8 @@ def login():
             flash(_('Invalid username or password'))
             return redirect(url_for('auth.login'))
         next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('main.index')
         if user.two_factor_enabled():
             request_verification_token(user.verification_phone)
             session['username'] = user.username
@@ -30,19 +32,16 @@ def login():
                 'auth.verify_2fa', next=next_page,
                 remember='1' if form.remember_me.data else '0'))
         login_user(user, remember=form.remember_me.data)
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('main.index')
         return redirect(next_page)
     return render_template('auth/login.html', title=_('Sign In'), form=form)
 
 
-@bp.route('/verify2fa', methods=['GET', 'POST'])
+@bp.route('/verify_2fa', methods=['GET', 'POST'])
 def verify_2fa():
     form = Confirm2faForm()
     if form.validate_on_submit():
         phone = session['phone']
         if check_verification_token(phone, form.token.data):
-            del session['phone']
             if current_user.is_authenticated:
                 current_user.verification_phone = phone
                 db.session.commit()
@@ -50,10 +49,11 @@ def verify_2fa():
                 return redirect(url_for('main.index'))
             else:
                 username = session['username']
-                del session['username']
                 user = User.query.filter_by(username=username).first()
                 next_page = request.args.get('next')
                 remember = request.args.get('remember', '0') == '1'
+                if not next_page or url_parse(next_page).netloc != '':
+                    next_page = url_for('main.index')
                 login_user(user, remember=remember)
                 return redirect(next_page)
         form.token.errors.append('Invalid token')

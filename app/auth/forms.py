@@ -20,12 +20,6 @@ class Enable2faForm(FlaskForm):
     verification_phone = StringField('Phone', validators=[DataRequired()])
     submit = SubmitField('Enable 2FA')
 
-    def validate_verification_phone(self, verification_phone):
-        try:
-            return
-        except:
-            print("An exception occurred")
-
 
 class Disable2faForm(FlaskForm):
     submit = SubmitField('Disable 2FA')
