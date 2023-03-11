@@ -14,7 +14,7 @@ pipeline {
             }
             steps {
                 echo 'Copying .env file...'
-                sh 'cp ${SECRET_FILE_ID} .env'
+                sh 'cp ${TWILIO_CREDS} .env'
                 sh 'docker build -t microblog:latest .'
             }
         }
