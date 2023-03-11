@@ -10,10 +10,12 @@ pipeline {
         }
         stage('Build') {
             environment {
-                TWILIO_CREDS = credentials('twilio-creds')
+                TWILIO_ACCOUNT_SID = credentials('TWILIO_ACCOUNT_SID')
+                TWILIO_AUTH_TOKEN = credentials('TWILIO_ACCOUNT_SID')
+                TWILIO_VERIFY_SERVICE_ID = credentials('TWILIO_ACCOUNT_SID')
             }
             steps {
-                sh 'cp $TWILIO_CREDS .env'
+                echo '$TWILIO_ACCOUNT_SID'
                 sh 'docker build -t microblog:latest .'
             }
         }
