@@ -7,9 +7,10 @@ from langdetect import detect, LangDetectException
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm, \
     MessageForm
-from app.models import User, Post, Message, Notification
+from app.models import User, Post, Message, Notification, Archive
 from app.translate import translate
 from app.main import bp
+from sqlalchemy import select
 
 
 @bp.before_app_request
@@ -19,6 +20,7 @@ def before_request():
         db.session.commit()
         g.search_form = SearchForm()
     g.locale = str(get_locale())
+    db.create_all()
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -82,7 +84,6 @@ def user(username):
     return render_template('user.html', user=user, posts=posts.items,
                            next_url=next_url, prev_url=prev_url, form=form)
 
-
 @bp.route('/user/<username>/popup')
 @login_required
 def user_popup(username):
@@ -106,6 +107,15 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title=_('Edit Profile'),
                            form=form)
+
+# 
+@bp.route('/archive/<post_b>/<post_user>/<post_time>')
+@login_required
+def archive(post_b, post_user, post_time):
+    current_user.archive(post_b, post_user, post_time)
+    db.session.commit()
+    flash(_('You have archived %(username)s post!', username=post_user))
+    return redirect(url_for('main.index'))
 
 
 @bp.route('/follow/<username>', methods=['POST'])

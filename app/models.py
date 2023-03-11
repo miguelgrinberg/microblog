@@ -89,12 +89,15 @@ followers = db.Table(
 )
 
 
+
 class User(UserMixin, PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    # link archive class to user
+    archive = db.relationship('Archive', backref='archivee', lazy='dynamic')
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     token = db.Column(db.String(32), index=True, unique=True)
@@ -128,7 +131,13 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
             digest, size)
-
+    
+    # Create new achive entry
+    def archive(self, post_body, post_user, post_time):
+        a = Archive(body=post_body, author=post_user, archived_by=self.id)
+        db.session.add(a)
+        print("Archived!")
+    
     def follow(self, user):
         if not self.is_following(user):
             self.followed.append(user)
@@ -250,6 +259,18 @@ class Post(SearchableMixin, db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+# Archive class for archived posts    
+class Archive(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.String(140))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author = db.Column(db.String(50))
+    archived_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+    language = db.Column(db.String(5))
+
+    def __repr__(self):
+        return '<Archive {}>'.format(self.body)
 
 
 class Message(db.Model):

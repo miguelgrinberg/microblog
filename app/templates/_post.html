@@ -1,4 +1,5 @@
-    <table class="table table-hover">
+
+<table class="table table-hover">
         <tr>
             <td width="70px">
                 <a href="{{ url_for('main.user', username=post.author.username) }}">
@@ -17,6 +18,7 @@
                     username=user_link, when=moment(post.timestamp).fromNow()) }}
                 <br>
                 <span id="post{{ post.id }}">{{ post.body }}</span>
+                
                 {% if post.language and post.language != g.locale %}
                 <br><br>
                 <span id="translation{{ post.id }}">
@@ -27,6 +29,12 @@
                                 '{{ g.locale }}');">{{ _('Translate') }}</a>
                 </span>
                 {% endif %}
+                {% if post.author.username != current_user.username %}
+                    <a href="{{ url_for('main.archive', post_b=post.body, post_user=post.author.username, post_time=post.timestamp) }}">Archive</a>
+                {% endif %}
             </td>
         </tr>
     </table>
+
+    
+
