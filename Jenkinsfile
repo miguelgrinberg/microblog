@@ -13,8 +13,7 @@ pipeline {
                 TWILIO_CREDS = credentials('twilio-creds')
             }
             steps {
-                echo 'Copying .env file...'
-                sh 'cp ${TWILIO_CREDS} .env'
+                sh 'cp $TWILIO_CREDS .env'
                 sh 'docker build -t microblog:latest .'
             }
         }
