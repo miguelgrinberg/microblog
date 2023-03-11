@@ -13,7 +13,8 @@ pipeline {
                 TWILIO_CREDS = credentials('twilio-creds')
             }
             steps {
-                sh 'cp $TWILIO_CREDS .env'
+                sh 'chown -R root:jenkins target/'
+                sh 'sudo cp $TWILIO_CREDS .env'
                 sh 'docker build -t microblog:latest .'
             }
         }
