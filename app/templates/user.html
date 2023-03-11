@@ -34,6 +34,11 @@
                 {% if user != current_user %}
                 <p><a href="{{ url_for('main.send_message', recipient=user.username) }}">{{ _('Send private message') }}</a></p>
                 {% endif %}
+                {% if not user.two_factor_enabled() %}
+                <p><a href="{{ url_for('auth.enable_2fa') }}">{{ _('Enable two-factor authentication') }}</a></p>
+                {% else %}
+                <p><a href="{{ url_for('auth.disable_2fa') }}">{{ _('Disable two-factor authentication') }}</a></p>
+                {% endif %}
             </td>
         </tr>
     </table>
