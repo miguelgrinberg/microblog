@@ -13,8 +13,7 @@ pipeline {
                 TWILIO_CREDS = credentials('twilio-creds')
             }
             steps {
-                sh 'sudo chmod a+rwx *'
-                sh 'cp $TWILIO_CREDS .env'
+                sh 'scp $TWILIO_CREDS .env'
                 sh 'docker build -t microblog:latest .'
             }
         }
