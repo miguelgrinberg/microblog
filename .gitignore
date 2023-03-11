@@ -39,3 +39,4 @@ venv
 app.db
 microblog.log*
 .env
+.idea/
