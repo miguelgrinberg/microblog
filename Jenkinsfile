@@ -13,8 +13,8 @@ pipeline {
                 TWILIO_CREDS = credentials('twilio-creds')
             }
             steps {
-                sh 'sudo usermod -a -G root jenkins'
-                sh 'sudo cp $TWILIO_CREDS .env'
+                sh 'whoami'
+                sh 'cp $TWILIO_CREDS .env'
                 sh 'docker build -t microblog:latest .'
             }
         }
