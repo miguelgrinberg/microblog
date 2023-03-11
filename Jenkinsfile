@@ -6,6 +6,9 @@ pipeline {
             steps {
                 // Stop running microblog container (microblog label applied to microblog container by this repo's Dockerfile)
                 sh 'docker stop $(docker ps -q --filter name=microblog) || true && docker rm $(docker ps -q --filter name=microblog) || true'
+                withCredentials([file(credentialsId: twilio-creds, variable: 'env')]) {
+                    writeFile file: '.env', text: readFile(env)
+                }
             }
         }
         stage('Build') {
