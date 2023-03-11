@@ -15,7 +15,7 @@ pipeline {
                 TWILIO_VERIFY_SERVICE_ID = credentials('TWILIO_ACCOUNT_SID')
             }
             steps {
-                echo '$TWILIO_ACCOUNT_SID'
+                sh 'cat .env'
                 sh 'docker build -t microblog:latest .'
             }
         }
