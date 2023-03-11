@@ -7,12 +7,14 @@ pipeline {
                 // Stop running microblog container (microblog label applied to microblog container by this repo's Dockerfile)
                 sh 'docker stop $(docker ps -q --filter name=microblog) || true && docker rm $(docker ps -q --filter name=microblog) || true'
             }
-            withCredentials([file(credentialsId: twilio-creds, variable: 'env')]) {
-                sh "cp \$env /.env"
-            }
         }
         stage('Build') {
+            environment {
+                TWILIO_CREDS = credentials('twilio-creds')
+            }
             steps {
+                echo 'Copying .env file...'
+                sh 'cp SECRET_FILE_ID ./'
                 sh 'docker build -t microblog:latest .'
             }
         }
