@@ -30,7 +30,11 @@
                 </span>
                 {% endif %}
                 {% if post.author.username != current_user.username %}
-                    <a href="{{ url_for('main.archive', post_b=post.body, post_user=post.author.username, post_time=post.timestamp) }}">Archive</a>
+                    {% if not current_user.has_archived_post(post.id) %}
+                        <a href="{{ url_for('main.archive', post_id=post.id, post_b=post.body, post_user=post.author.username, post_time=post.timestamp) }}">Archive</a>
+                    {% else %}
+                        <a href="{{ url_for('main.archive_remove', post_user=post.author.username, post_id=post.id) }}">Remove from Archive</a>
+                    {% endif %}
                 {% endif %}
             </td>
         </tr>

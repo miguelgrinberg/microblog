@@ -108,14 +108,21 @@ def edit_profile():
     return render_template('edit_profile.html', title=_('Edit Profile'),
                            form=form)
 
-# 
-@bp.route('/archive/<post_b>/<post_user>/<post_time>')
+@bp.route('/archive/<post_id>/<post_b>/<post_user>/<post_time>')
 @login_required
-def archive(post_b, post_user, post_time):
-    current_user.archive(post_b, post_user, post_time)
+def archive(post_id, post_b, post_user, post_time):
+    current_user.archive(post_id, post_b, post_user, post_time)
     db.session.commit()
     flash(_('You have archived %(username)s post!', username=post_user))
-    return redirect(url_for('main.index'))
+    return redirect(url_for('main.explore'))
+
+@bp.route('/archive/<post_user>/<post_id>')
+@login_required
+def archive_remove(post_user, post_id):
+    current_user.archive_remove(post_id)
+    db.session.commit()
+    flash(_('You have removed %(username)s post from your archive!', username=post_user))
+    return redirect(url_for('main.explore'))
 
 
 @bp.route('/follow/<username>', methods=['POST'])

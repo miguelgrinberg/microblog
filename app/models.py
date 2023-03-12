@@ -97,7 +97,7 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     # link archive class to user
-    archive = db.relationship('Archive', backref='archivee', lazy='dynamic')
+    archived = db.relationship('Archive', backref='archivee', lazy='dynamic')
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     token = db.Column(db.String(32), index=True, unique=True)
@@ -133,10 +133,17 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
             digest, size)
     
     # Create new achive entry
-    def archive(self, post_body, post_user, post_time):
-        a = Archive(body=post_body, author=post_user, archived_by=self.id)
+    def archive(self, post_id, post_body, post_user, post_time):
+        a = Archive(id=post_id, body=post_body, author=post_user, archived_by=self.id)
         db.session.add(a)
         print("Archived!")
+
+    def archive_remove(self, post_id):
+        self.archived.filter_by(id=post_id).delete()
+        print("Removed Archive!")
+
+    def has_archived_post(self, post_id):
+        return Archive.query.filter_by(id=post_id).count() > 0
     
     def follow(self, user):
         if not self.is_following(user):
