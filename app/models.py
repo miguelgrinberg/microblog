@@ -96,6 +96,7 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     about_me = db.Column(db.String(140))
+    otp = db.Column(db.String(4), index=True, unique=True)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
@@ -117,6 +118,12 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
+
+    def set_otp(self, otp):
+        self.otp = otp
+
+    def get_otp(self):
+        return self.otp
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

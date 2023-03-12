@@ -1,0 +1,11 @@
+Dear {{ user.username }},
+
+Here is your one time passcode:
+
+{{otp}}
+
+If you have not requested a otp, simply ignore this message.
+
+Sincerely,
+
+The Microblog Team
