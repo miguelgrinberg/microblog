@@ -5,7 +5,7 @@ from flask_babel import _
 from app import db
 from app.auth import bp
 from app.auth.forms import LoginForm, RegistrationForm, \
-    ResetPasswordRequestForm, ResetPasswordForm
+    ResetPasswordRequestForm, ResetPasswordForm, OTPForm
 from app.models import User
 from app.auth.email import send_password_reset_email
 
@@ -27,8 +27,15 @@ def login():
 @bp.route('/otp', methods=['GET', 'POST'])
 def otp_login():
     form = OTPForm()
-    if OTP != user.curr_otp :
-        flash(_('Invalid OTP'))
+    user = User.query.filter_by(username=form.username.data).first()
+    otp = form.OTP.data
+    if user:
+        send_otp_email(user)
+        flash(_('Check your email for your OTP'))
+        return redirect(url_for('auth.otp_login'))
+        if otp != user.otp:
+            flash(_('Invalid OTP'))
+            return redirect(url_for('auth.otp_login'))
     if form.validate_on_submit():
         return redirect(url_for('main.index'))
     return render_template('auth/otp_login.html', title=_('Enter OTP'),

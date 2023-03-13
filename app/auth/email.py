@@ -9,11 +9,11 @@ def generate_otp(user):
     # which stores all digits
     digits = "0123456789"
     otp = ""
-
     # length of password can be changed
     # by changing value in range
     for i in range(4):
         otp += digits[math.floor(random.random() * 10)]
+    user.otp = otp
     return otp
 
 def send_otp_email(user):

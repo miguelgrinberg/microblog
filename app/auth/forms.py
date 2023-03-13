@@ -11,7 +11,8 @@ class LoginForm(FlaskForm):
     submit = SubmitField(_l('Sign In'))
 
 class OTPForm(FlaskForm):
-    OTP = StringField(_l('One Time Passcode'), validators=[DataRequired()]) ###EqualTo(otp)
+    username = StringField(_l('Username'), validators=[DataRequired()])
+    OTP = StringField(_l('OTP'), validators=[DataRequired()]) ###EqualTo(otp)
     submit = SubmitField(_l('Log in') )
 
 class RegistrationForm(FlaskForm):
