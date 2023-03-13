@@ -141,6 +141,9 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
         db.session.add(a)
         print("Archived!")
 
+    def delete_post(self, post_id):
+        return self.posts.filter_by(id=post_id).delete()
+
     def archive_remove(self, post_id):
         self.archived.filter_by(id=post_id).delete()
         print("Removed Archive!")

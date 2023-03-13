@@ -36,6 +36,9 @@
                         <a href="{{ url_for('main.archive_remove', post_user=post.author.username, post_id=post.id) }}">Remove from Archive</a>
                     {% endif %}
                 {% endif %}
+                {% if post.author.username == current_user.username %}
+                    <a href="{{ url_for('main.delete', post_id=post.id) }}">Delete</a>
+                {% endif %}
             </td>
         </tr>
     </table>

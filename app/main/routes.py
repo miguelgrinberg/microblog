@@ -153,6 +153,13 @@ def archive_remove_user(post_user, post_id):
     flash(_('You have removed %(username)s post from your archive!', username=post_user))
     return redirect(url_for('main.view_archive', username=current_user.username))
 
+@bp.route('/delete/<post_id>')
+@login_required
+def delete(post_id):
+    current_user.delete_post(post_id)
+    db.session.commit()
+    flash(_('You have delete your post!'))
+    return redirect(url_for('main.index'))
 
 @bp.route('/follow/<username>', methods=['POST'])
 @login_required
