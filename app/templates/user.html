@@ -13,8 +13,9 @@
                 <p>{{ _('%(count)d followers', count=user.followers.count()) }}, {{ _('%(count)d following', count=user.followed.count()) }}</p>
                 {% if user == current_user %}
                 <p><a href="{{ url_for('main.edit_profile') }}">{{ _('Edit your profile') }}</a></p>
+                <p><a href="{{ url_for('main.view_archive' , username=user.username) }}">{{ _('View Archived Posts') }}</a></p>
                 {% if not current_user.get_task_in_progress('export_posts') %}
-                <p><a href="{{ url_for('main.export_posts') }}">{{ _('Export your posts') }}</a></p>
+                <p><a href="{{ url_for('main.export_posts')}}">{{ _('Export your posts') }}</a></p>
                 {% endif %}
                 {% elif not current_user.is_following(user) %}
                 <p>
@@ -34,7 +35,6 @@
                 {% if user != current_user %}
                 <p><a href="{{ url_for('main.send_message', recipient=user.username) }}">{{ _('Send private message') }}</a></p>
                 {% endif %}
-                
             </td>
         </tr>
     </table>

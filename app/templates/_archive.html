@@ -1,0 +1,27 @@
+<table class="table table-hover">
+    <tr>
+        <td width="70px">
+            <a href="{{ url_for('main.user', username=archive.author) }}">
+                <img src="{{ archive.own.avatar(70) }}" />
+            </a>
+        </td>
+        <td>
+            {% set user_link %}
+                <span class="user_popup">
+                    <a href="{{ url_for('main.user', username=archive.author) }}">
+                        {{ archive.author }}
+                    </a>
+                </span>
+            {% endset %}
+            {{ _('%(username)s said %(when)s',
+                username=user_link, when=moment(archive.timestamp).fromNow()) }}
+            <br>
+            <span id="archive{{ archive.id }}">{{ archive.body }}</span>
+            <br>
+        
+            {% if archive.author != current_user.username %}
+                <a href="{{ url_for('main.archive_remove_user', post_user=archive.author, post_id=archive.id) }}">Remove from Archive</a>
+            {% endif %}
+        </td>
+    </tr>
+</table>

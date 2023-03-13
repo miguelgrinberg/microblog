@@ -108,10 +108,31 @@ def edit_profile():
     return render_template('edit_profile.html', title=_('Edit Profile'),
                            form=form)
 
-@bp.route('/archive/<post_id>/<post_b>/<post_user>/<post_time>')
+@bp.route('/archived/<username>')
 @login_required
-def archive(post_id, post_b, post_user, post_time):
-    current_user.archive(post_id, post_b, post_user, post_time)
+def view_archive(username):
+    no_posts = False
+    user = User.query.filter_by(username=username).first_or_404()
+    page = request.args.get('page', 1, type=int)
+    posts = user.archived.order_by(Archive.timestamp.desc()).paginate(
+        page=page, per_page=current_app.config['POSTS_PER_PAGE'],
+        error_out=False)
+    if not current_user.has_archived_posts():
+        no_posts = True
+        flash(_('You have no archived posts!'))
+    
+    next_url = url_for('main.view_archive', username=user.username,
+                       page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('main.view_archive', username=user.username,
+                       page=posts.prev_num) if posts.has_prev else None
+    form = EmptyForm()
+    return render_template('archived_posts.html', user=user, archived=posts.items, none_archived=no_posts,
+                           next_url=next_url, prev_url=prev_url, form=form)
+
+@bp.route('/archive/<post_id>/<post_b>/<user_id>/<post_user>/<post_time>')
+@login_required
+def archive(post_id, post_b, user_id, post_user, post_time):
+    current_user.archive(post_id, post_b, user_id, post_user, post_time)
     db.session.commit()
     flash(_('You have archived %(username)s post!', username=post_user))
     return redirect(url_for('main.explore'))
@@ -123,6 +144,14 @@ def archive_remove(post_user, post_id):
     db.session.commit()
     flash(_('You have removed %(username)s post from your archive!', username=post_user))
     return redirect(url_for('main.explore'))
+
+@bp.route('/archived/<post_user>/<post_id>')
+@login_required
+def archive_remove_user(post_user, post_id):
+    current_user.archive_remove(post_id)
+    db.session.commit()
+    flash(_('You have removed %(username)s post from your archive!', username=post_user))
+    return redirect(url_for('main.view_archive', username=current_user.username))
 
 
 @bp.route('/follow/<username>', methods=['POST'])

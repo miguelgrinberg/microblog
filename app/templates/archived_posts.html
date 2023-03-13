@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    {% if none_archived == false %}
+        <h1>{{ _('Your Archived Posts') }}</h1>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-4">
+            {% for archive in archived %}
+                {% include '_archive.html' %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
