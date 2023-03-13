@@ -9,12 +9,17 @@ RUN python -m venv venv
 RUN venv/bin/pip install -r requirements.txt
 RUN venv/bin/pip install gunicorn pymysql cryptography
 
+COPY .env .env
 COPY app app
 COPY migrations migrations
 COPY microblog.py config.py boot.sh ./
 RUN chmod a+x boot.sh
 
 ENV FLASK_APP microblog.py
+
+CMD flask db upgrade
+CMD flask db migrate -m "two-factor authentication"
+CMD flask db upgrade
 
 RUN chown -R microblog:microblog ./
 USER microblog
