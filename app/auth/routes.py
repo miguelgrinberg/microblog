@@ -20,17 +20,17 @@ def login():
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('auth/otp_login.html')
+            next_page = url_for('auth.otp_login')
         return redirect(next_page)
     return render_template('auth/login.html', title=_('Sign In'), form=form)
 
-def auth_opt():
+@bp.route('/otp', methods=['GET', 'POST'])
+def otp_login():
     form = OTPForm()
     if OTP != user.curr_otp :
         flash(_('Invalid OTP'))
     if form.validate_on_submit():
         return redirect(url_for('main.index'))
-
     return render_template('auth/otp_login.html', title=_('Enter OTP'),
                                form=form)
 
