@@ -12,7 +12,6 @@ def verify_password(username, password):
     if user and user.check_password(password):
         return user
 
-
 @basic_auth.error_handler
 def basic_auth_error(status):
     return error_response(status)
