@@ -8,5 +8,11 @@
             {{ wtf.quick_form(form) }}
         </div>
     </div>
-<p><a href="https://en.gravatar.com/emails/">{{ _('Change Gravatar') }}</a></p>
+    <div class="row">
+	    <div class="col-md-12">
+	        <h2>{{ _('Change Avatar') }}</h2>
+		    <p>{{ _('Use Gravatar to manage your profile image that appears on this site and other sites that support Gravatar.') }}</p>
+		    <p><a href="https://en.gravatar.com/emails/" target="_blank">{{ _('Manage Your Gravatar') }}</a></p>
+	    </div>
+    </div>
 {% endblock %}
