@@ -111,7 +111,7 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
     token_expiration: so.Mapped[Optional[datetime]]
 
     posts: so.WriteOnlyMapped['Post'] = so.relationship(
-        'Post', back_populates='author', cascade='all, delete-orphan')
+        back_populates='author', cascade='all, delete-orphan')
     following: so.WriteOnlyMapped['User'] = so.relationship(
         secondary=followers, primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
@@ -295,7 +295,7 @@ class Post(SearchableMixin, db.Model):
                                                index=True)
     language: so.Mapped[Optional[str]] = so.mapped_column(sa.String(5))
 
-    author: so.Mapped[User] = so.relationship('User', back_populates='posts')
+    author: so.Mapped[User] = so.relationship(back_populates='posts')
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
