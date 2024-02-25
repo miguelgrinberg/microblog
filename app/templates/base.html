@@ -36,6 +36,8 @@
                 </div>
             </form>
             {% endif %}
+            <li class="nav-item"><a href="{{ url_for('main.about_page') }}">{{ _('About') }}</a></li>
+
           </ul>
           <ul class="navbar-nav mb-2 mb-lg-0">
             {% if current_user.is_anonymous %}

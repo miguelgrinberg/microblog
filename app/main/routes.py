@@ -176,6 +176,10 @@ def search():
         if page > 1 else None
     return render_template('search.html', title=_('Search'), posts=posts,
                            next_url=next_url, prev_url=prev_url)
+@bp.route('/about')
+def about_page():
+    return render_template('about.html', title=_('About me'))
+
 
 
 @bp.route('/send_message/<recipient>', methods=['GET', 'POST'])
