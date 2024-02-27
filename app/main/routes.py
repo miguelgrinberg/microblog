@@ -12,7 +12,9 @@ from app.models import User, Post, Message, Notification
 from app.translate import translate
 from app.main import bp
 
-
+@bp.route('/about')
+def about_page():
+    return render_template('about.html', title=_('About me'))
 @bp.before_app_request
 def before_request():
     if current_user.is_authenticated:
