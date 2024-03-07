@@ -12,6 +12,12 @@ from app.models import User, Post, Message, Notification
 from app.translate import translate
 from app.main import bp
 
+### Dans routes.py
+
+@bp.route('/about')
+def about():
+    return render_template('about.html')
+
 
 @bp.before_app_request
 def before_request():
