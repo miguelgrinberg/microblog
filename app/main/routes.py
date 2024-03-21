@@ -239,3 +239,9 @@ def notifications():
         'data': n.get_data(),
         'timestamp': n.timestamp
     } for n in notifications]
+### Dans routes.py
+
+@bp.route('/about')
+def about():
+    return render_template('about.html')
+
