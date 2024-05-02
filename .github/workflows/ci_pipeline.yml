@@ -1,0 +1,12 @@
+name: Use CI Pipeline from Central Repo
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  trigger-central-workflow:
+    uses: Max3kkk/thesis_ci_test/.github/workflows/ci-pipeline.yml@main
+    with:
+      github_token: ${{ secrets.MY_GITHUB_TOKEN }}
