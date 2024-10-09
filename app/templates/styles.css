@@ -1,0 +1,21 @@
+/* styles.css */
+body {
+  background-color: #f8f9fa; /* Light grey background */
+}
+
+h1 {
+  color: #343a40; /* Dark grey */
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #343a40;
+  color: white;
+  padding: 10px 0;
+}
+
+.container {
+  padding-bottom: 50px; /* So content doesn't overlap footer */
+}
