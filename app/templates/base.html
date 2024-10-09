@@ -91,23 +91,32 @@
             {{ g.search_form.q(size=30, class='form-control me-2', placeholder=g.search_form.q.label.text) }}
           </form>
           {% endif %}
-          <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('main.messages') }}">{{ _('Messages') }}
-                {% set unread_message_count = current_user.unread_message_count() %}
-                <span id="message_count" class="badge text-bg-danger"
-                      style="visibility: {% if unread_message_count %}visible{% else %}hidden{% endif %};">
-                    {{ unread_message_count }}
-                </span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Profile') }}</a>
-            </li>
-            <li class="nav-item">
-              <span class="logout-text" onclick="location.href='{{ url_for('auth.logout') }}'">{{ _('Logout') }}</span>
-            </li>
-          </ul>
+<ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('main.messages') }}">{{ _('Messages') }}
+        {% if current_user.is_authenticated %}
+        {% set unread_message_count = current_user.unread_message_count() %}
+        <span id="message_count" class="badge text-bg-danger"
+              style="visibility: {% if unread_message_count %}visible{% else %}hidden{% endif %};">
+            {{ unread_message_count }}
+        </span>
+        {% endif %}
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Profile') }}</a>
+    </li>
+    {% if current_user.is_authenticated %}
+    <li class="nav-item">
+      <span class="logout-text" onclick="location.href='{{ url_for('auth.logout') }}'">{{ _('Logout') }}</span>
+    </li>
+    {% else %}
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
+    </li>
+    {% endif %}
+</ul>
+
         </div>
       </div>
     </nav>
