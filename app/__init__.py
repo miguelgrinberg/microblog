@@ -10,6 +10,8 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l
+import sys
+print(sys.path)
 
 from elasticsearch import Elasticsearch
 from redis import Redis
