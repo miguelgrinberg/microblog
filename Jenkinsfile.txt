@@ -1,10 +1,21 @@
 pipeline {
     agent any
+    environment {
+        SONARQUBE_URL = 'http://localhost:9000' // adjust based on your setup
+        SONAR_TOKEN = credentials('sonar-token') // configure in Jenkins Credentials
+    }
     stages {
         stage('Build') {
             steps {
                 echo 'Building...'
-                // Add your build steps here
+            }
+        }
+        stage('SonarQube Scan') {
+            steps {
+                script {
+                    // Replace with your actual SonarQube scan command
+                    sh 'sonar-scanner -Dsonar.projectKey=my-app -Dsonar.sources=. -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONAR_TOKEN'
+                }
             }
         }
     }
