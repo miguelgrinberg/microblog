@@ -1,4 +1,4 @@
-aiosmtpd==1.4.4.post2
+aiosmtpd==1.4.5
 alembic==1.12.1
 atpublic==4.0
 attrs==23.1.0
