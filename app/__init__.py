@@ -9,8 +9,6 @@ from flask_mail import Mail
 from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l
 from elasticsearch import Elasticsearch
-from redis import Redis
-import rq
 from config import Config
 
 
@@ -40,8 +38,6 @@ def create_app(config_class=Config):
     babel.init_app(app, locale_selector=get_locale)
     app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
         if app.config['ELASTICSEARCH_URL'] else None
-    app.redis = Redis.from_url(app.config['REDIS_URL'])
-    app.task_queue = rq.Queue('microblog-tasks', connection=app.redis)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
@@ -54,9 +50,6 @@ def create_app(config_class=Config):
 
     from app.cli import bp as cli_bp
     app.register_blueprint(cli_bp)
-
-    from app.api import bp as api_bp
-    app.register_blueprint(api_bp, url_prefix='/api')
 
     if not app.debug and not app.testing:
         if app.config['MAIL_SERVER']:
@@ -75,20 +68,15 @@ def create_app(config_class=Config):
             mail_handler.setLevel(logging.ERROR)
             app.logger.addHandler(mail_handler)
 
-        if app.config['LOG_TO_STDOUT']:
-            stream_handler = logging.StreamHandler()
-            stream_handler.setLevel(logging.INFO)
-            app.logger.addHandler(stream_handler)
-        else:
-            if not os.path.exists('logs'):
-                os.mkdir('logs')
-            file_handler = RotatingFileHandler('logs/microblog.log',
-                                               maxBytes=10240, backupCount=10)
-            file_handler.setFormatter(logging.Formatter(
-                '%(asctime)s %(levelname)s: %(message)s '
-                '[in %(pathname)s:%(lineno)d]'))
-            file_handler.setLevel(logging.INFO)
-            app.logger.addHandler(file_handler)
+        if not os.path.exists('logs'):
+            os.mkdir('logs')
+        file_handler = RotatingFileHandler('logs/microblog.log',
+                                           maxBytes=10240, backupCount=10)
+        file_handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s '
+            '[in %(pathname)s:%(lineno)d]'))
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
 
         app.logger.setLevel(logging.INFO)
         app.logger.info('Microblog startup')
