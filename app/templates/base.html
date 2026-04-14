@@ -29,6 +29,11 @@
             <li class="nav-item">
               <a class="nav-link" aria-current="page" href="{{ url_for('main.explore') }}">{{ _('Explore') }}</a>
             </li>
+            {% if current_user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="{{ url_for('main.favorites') }}">{{ _('My Favorites') }}</a>
+            </li>
+            {% endif %}
             {% if g.search_form %}
             <form class="navbar-form navbar-left" method="get" action="{{ url_for('main.search') }}">
                 <div class="form-group">

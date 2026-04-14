@@ -94,6 +94,15 @@ followers = sa.Table(
               primary_key=True)
 )
 
+user_posts = sa.Table(
+    'user_posts',
+    db.metadata,
+    sa.Column('user_id', sa.Integer, sa.ForeignKey('user.id'),
+              primary_key=True),
+    sa.Column('post_id', sa.Integer, sa.ForeignKey('post.id'),
+              primary_key=True)
+)
+
 
 class User(PaginatedAPIMixin, UserMixin, db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -127,6 +136,8 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
     notifications: so.WriteOnlyMapped['Notification'] = so.relationship(
         back_populates='user')
     tasks: so.WriteOnlyMapped['Task'] = so.relationship(back_populates='user')
+    favorite_posts: so.WriteOnlyMapped['Post'] = so.relationship(
+        secondary=user_posts, back_populates='favorited_by')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -228,6 +239,23 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
             self.posts.select().subquery())
         return db.session.scalar(query)
 
+    def favorite(self, post):
+        if not self.is_favoriting(post):
+            self.favorite_posts.add(post)
+
+    def unfavorite(self, post):
+        if self.is_favoriting(post):
+            self.favorite_posts.remove(post)
+
+    def is_favoriting(self, post):
+        query = self.favorite_posts.select().where(Post.id == post.id)
+        return db.session.scalar(query) is not None
+
+    def favorite_posts_count(self):
+        query = sa.select(sa.func.count()).select_from(
+            self.favorite_posts.select().subquery())
+        return db.session.scalar(query)
+
     def to_dict(self, include_email=False):
         data = {
             'id': self.id,
@@ -295,6 +323,8 @@ class Post(SearchableMixin, db.Model):
     language: so.Mapped[Optional[str]] = so.mapped_column(sa.String(5))
 
     author: so.Mapped[User] = so.relationship(back_populates='posts')
+    favorited_by: so.WriteOnlyMapped['User'] = so.relationship(
+        secondary=user_posts, back_populates='favorite_posts')
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)

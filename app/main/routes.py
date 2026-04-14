@@ -63,9 +63,10 @@ def explore():
         if posts.has_next else None
     prev_url = url_for('main.explore', page=posts.prev_num) \
         if posts.has_prev else None
+    form = EmptyForm()
     return render_template('index.html', title=_('Explore'),
                            posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
+                           prev_url=prev_url, form=form)
 
 
 @bp.route('/user/<username>')
@@ -174,8 +175,9 @@ def search():
         if total > page * current_app.config['POSTS_PER_PAGE'] else None
     prev_url = url_for('main.search', q=g.search_form.q.data, page=page - 1) \
         if page > 1 else None
+    form = EmptyForm()
     return render_template('search.html', title=_('Search'), posts=posts,
-                           next_url=next_url, prev_url=prev_url)
+                           next_url=next_url, prev_url=prev_url, form=form)
 
 
 @bp.route('/send_message/<recipient>', methods=['GET', 'POST'])
@@ -239,3 +241,53 @@ def notifications():
         'data': n.get_data(),
         'timestamp': n.timestamp
     } for n in notifications]
+
+
+@bp.route('/favorite/<int:post_id>', methods=['POST'])
+@login_required
+def favorite(post_id):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        post = db.session.scalar(
+            sa.select(Post).where(Post.id == post_id))
+        if post is None:
+            flash(_('Post not found.'))
+            return redirect(url_for('main.index'))
+        current_user.favorite(post)
+        db.session.commit()
+        flash(_('You have favorited this post!'))
+    return redirect(request.referrer or url_for('main.index'))
+
+
+@bp.route('/unfavorite/<int:post_id>', methods=['POST'])
+@login_required
+def unfavorite(post_id):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        post = db.session.scalar(
+            sa.select(Post).where(Post.id == post_id))
+        if post is None:
+            flash(_('Post not found.'))
+            return redirect(url_for('main.index'))
+        current_user.unfavorite(post)
+        db.session.commit()
+        flash(_('You have unfavorited this post.'))
+    return redirect(request.referrer or url_for('main.index'))
+
+
+@bp.route('/favorites')
+@login_required
+def favorites():
+    page = request.args.get('page', 1, type=int)
+    query = current_user.favorite_posts.select().order_by(Post.timestamp.desc())
+    posts = db.paginate(query, page=page,
+                        per_page=current_app.config['POSTS_PER_PAGE'],
+                        error_out=False)
+    next_url = url_for('main.favorites', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('main.favorites', page=posts.prev_num) \
+        if posts.has_prev else None
+    form = EmptyForm()
+    return render_template('index.html', title=_('My Favorites'),
+                           posts=posts.items, next_url=next_url,
+                           prev_url=prev_url, form=form)
