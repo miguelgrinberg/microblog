@@ -26,17 +26,13 @@
                 </span>
                 {% endif %}
                 <br><br>
-                {% if not current_user.is_favoriting(post) %}
-                <form action="{{ url_for('main.favorite', post_id=post.id) }}" method="post">
-                    {{ form.hidden_tag() }}
-                    {{ form.submit(value=_('Favorite'), class_='btn btn-outline-primary btn-sm') }}
-                </form>
-                {% else %}
-                <form action="{{ url_for('main.unfavorite', post_id=post.id) }}" method="post">
-                    {{ form.hidden_tag() }}
-                    {{ form.submit(value=_('Unfavorite'), class_='btn btn-outline-secondary btn-sm') }}
-                </form>
-                {% endif %}
+                <span class="favorite-btn" data-post-id="{{ post.id }}" style="cursor: pointer; font-size: 1.5em;">
+                    {% if current_user.is_favoriting(post) %}
+                    <span class="heart-icon" style="color: #e74c3c;">♥</span>
+                    {% else %}
+                    <span class="heart-icon" style="color: #999;">♡</span>
+                    {% endif %}
+                </span>
             </td>
         </tr>
     </table>

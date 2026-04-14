@@ -180,6 +180,40 @@
         }, 10000);
       }
       document.addEventListener('DOMContentLoaded', initialize_notifications);
+
+      function initialize_favorites() {
+        const favoriteButtons = document.getElementsByClassName('favorite-btn');
+        for (let i = 0; i < favoriteButtons.length; i++) {
+          favoriteButtons[i].addEventListener('click', async function(ev) {
+            const postId = this.getAttribute('data-post-id');
+            const heartIcon = this.querySelector('.heart-icon');
+            
+            try {
+              const response = await fetch('/toggle_favorite/' + postId, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                }
+              });
+              
+              const data = await response.json();
+              
+              if (data.success) {
+                if (data.is_favorited) {
+                  heartIcon.innerText = '♥';
+                  heartIcon.style.color = '#e74c3c';
+                } else {
+                  heartIcon.innerText = '♡';
+                  heartIcon.style.color = '#999';
+                }
+              }
+            } catch (error) {
+              console.error('Error toggling favorite:', error);
+            }
+          });
+        }
+      }
+      document.addEventListener('DOMContentLoaded', initialize_favorites);
       {% endif %}
     </script>
   </body>

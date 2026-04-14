@@ -243,36 +243,23 @@ def notifications():
     } for n in notifications]
 
 
-@bp.route('/favorite/<int:post_id>', methods=['POST'])
+@bp.route('/toggle_favorite/<int:post_id>', methods=['POST'])
 @login_required
-def favorite(post_id):
-    form = EmptyForm()
-    if form.validate_on_submit():
-        post = db.session.scalar(
-            sa.select(Post).where(Post.id == post_id))
-        if post is None:
-            flash(_('Post not found.'))
-            return redirect(url_for('main.index'))
-        current_user.favorite(post)
-        db.session.commit()
-        flash(_('You have favorited this post!'))
-    return redirect(request.referrer or url_for('main.index'))
-
-
-@bp.route('/unfavorite/<int:post_id>', methods=['POST'])
-@login_required
-def unfavorite(post_id):
-    form = EmptyForm()
-    if form.validate_on_submit():
-        post = db.session.scalar(
-            sa.select(Post).where(Post.id == post_id))
-        if post is None:
-            flash(_('Post not found.'))
-            return redirect(url_for('main.index'))
+def toggle_favorite(post_id):
+    post = db.session.scalar(
+        sa.select(Post).where(Post.id == post_id))
+    if post is None:
+        return {'success': False, 'error': 'Post not found'}, 404
+    
+    if current_user.is_favoriting(post):
         current_user.unfavorite(post)
-        db.session.commit()
-        flash(_('You have unfavorited this post.'))
-    return redirect(request.referrer or url_for('main.index'))
+        is_favorited = False
+    else:
+        current_user.favorite(post)
+        is_favorited = True
+    
+    db.session.commit()
+    return {'success': True, 'is_favorited': is_favorited}
 
 
 @bp.route('/favorites')
