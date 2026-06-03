@@ -1,17 +1,21 @@
-from flask import request
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField
-from wtforms.validators import ValidationError, DataRequired, Length
 import sqlalchemy as sa
-from flask_babel import _, lazy_gettext as _l
-from app import db
-from app.models import User
+from wtforms import Form, StringField, SubmitField, TextAreaField
+from wtforms.validators import ValidationError, DataRequired, Length
+from wtforms.csrf.session import SessionCSRF
+from app.i18n import _l
+from config import Config
 
 
-class EditProfileForm(FlaskForm):
+class BaseForm(Form):
+    class Meta:
+        csrf = True
+        csrf_class = SessionCSRF
+        csrf_secret = Config.SECRET_KEY.encode()
+
+
+class EditProfileForm(BaseForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
-    about_me = TextAreaField(_l('About me'),
-                             validators=[Length(min=0, max=140)])
+    about_me = TextAreaField(_l('About me'), validators=[Length(min=0, max=140)])
     submit = SubmitField(_l('Submit'))
 
     def __init__(self, original_username, *args, **kwargs):
@@ -20,34 +24,31 @@ class EditProfileForm(FlaskForm):
 
     def validate_username(self, username):
         if username.data != self.original_username:
-            user = db.session.scalar(sa.select(User).where(
-                User.username == username.data))
+            from app.db import get_db_session
+            from app.models import User
+            user = get_db_session().scalar(sa.select(User).where(User.username == username.data))
             if user is not None:
-                raise ValidationError(_('Please use a different username.'))
+                raise ValidationError(_l('Please use a different username.'))
 
 
-class EmptyForm(FlaskForm):
+class EmptyForm(BaseForm):
     submit = SubmitField('Submit')
 
 
-class PostForm(FlaskForm):
+class PostForm(BaseForm):
     post = TextAreaField(_l('Say something'), validators=[
         DataRequired(), Length(min=1, max=140)])
     submit = SubmitField(_l('Submit'))
 
 
-class SearchForm(FlaskForm):
+class SearchForm(Form):
     q = StringField(_l('Search'), validators=[DataRequired()])
 
-    def __init__(self, *args, **kwargs):
-        if 'formdata' not in kwargs:
-            kwargs['formdata'] = request.args
-        if 'meta' not in kwargs:
-            kwargs['meta'] = {'csrf': False}
-        super(SearchForm, self).__init__(*args, **kwargs)
+    class Meta:
+        csrf = False
 
 
-class MessageForm(FlaskForm):
+class MessageForm(BaseForm):
     message = TextAreaField(_l('Message'), validators=[
         DataRequired(), Length(min=1, max=140)])
     submit = SubmitField(_l('Submit'))

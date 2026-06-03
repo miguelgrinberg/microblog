@@ -1,85 +1,107 @@
-from flask import render_template, redirect, url_for, flash, request
 from urllib.parse import urlsplit
-from flask_login import login_user, logout_user, current_user
-from flask_babel import _
 import sqlalchemy as sa
-from app import db
-from app.auth import bp
-from app.auth.forms import LoginForm, RegistrationForm, \
-    ResetPasswordRequestForm, ResetPasswordForm
-from app.models import User
+from fastapi import Depends, Request
+from fastapi.responses import RedirectResponse, HTMLResponse
+from sqlalchemy.orm import Session
+
+from app.auth import router
+from app.auth.forms import LoginForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm
 from app.auth.email import send_password_reset_email
+from app.db import get_db
+from app.i18n import _
+from app.models import User
+from app.security import flash, get_current_user, login_user, logout_user
+from app.templates import render
 
 
-@bp.route('/login', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = db.session.scalar(
-            sa.select(User).where(User.username == form.username.data))
+@router.api_route('/login', methods=['GET', 'POST'], response_class=HTMLResponse, name='login')
+async def login(request: Request, db: Session = Depends(get_db)):
+    current_user = get_current_user(request, db)
+    if current_user is not None:
+        return RedirectResponse(url='/', status_code=303)
+
+    form_data = await request.form() if request.method == 'POST' else None
+    form = LoginForm(formdata=form_data, meta={'session': request.session})
+
+    if request.method == 'POST' and form.validate():
+        user = db.scalar(sa.select(User).where(User.username == form.username.data))
         if user is None or not user.check_password(form.password.data):
-            flash(_('Invalid username or password'))
-            return redirect(url_for('auth.login'))
-        login_user(user, remember=form.remember_me.data)
-        next_page = request.args.get('next')
+            flash(request, _('Invalid username or password'))
+            return RedirectResponse(url='/auth/login', status_code=303)
+        login_user(request, user.id)
+        next_page = request.query_params.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
-            next_page = url_for('main.index')
-        return redirect(next_page)
-    return render_template('auth/login.html', title=_('Sign In'), form=form)
+            next_page = '/'
+        return RedirectResponse(url=next_page, status_code=303)
+
+    return render(request, db, 'auth/login.html', title=_('Sign In'), form=form)
 
 
-@bp.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('main.index'))
+@router.get('/logout', name='logout')
+async def logout(request: Request):
+    logout_user(request)
+    return RedirectResponse(url='/', status_code=303)
 
 
-@bp.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
+@router.api_route('/register', methods=['GET', 'POST'], response_class=HTMLResponse, name='register')
+async def register(request: Request, db: Session = Depends(get_db)):
+    current_user = get_current_user(request, db)
+    if current_user is not None:
+        return RedirectResponse(url='/', status_code=303)
+
+    form_data = await request.form() if request.method == 'POST' else None
+    form = RegistrationForm(formdata=form_data, meta={'session': request.session})
+
+    if request.method == 'POST' and form.validate():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        flash(_('Congratulations, you are now a registered user!'))
-        return redirect(url_for('auth.login'))
-    return render_template('auth/register.html', title=_('Register'),
-                           form=form)
+        db.add(user)
+        db.commit()
+        flash(request, _('Congratulations, you are now a registered user!'))
+        return RedirectResponse(url='/auth/login', status_code=303)
+
+    return render(request, db, 'auth/register.html', title=_('Register'), form=form)
 
 
-@bp.route('/reset_password_request', methods=['GET', 'POST'])
-def reset_password_request():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
-    form = ResetPasswordRequestForm()
-    if form.validate_on_submit():
-        user = db.session.scalar(
-            sa.select(User).where(User.email == form.email.data))
+@router.api_route('/reset_password_request', methods=['GET', 'POST'],
+                  response_class=HTMLResponse, name='reset_password_request')
+async def reset_password_request(request: Request, db: Session = Depends(get_db)):
+    current_user = get_current_user(request, db)
+    if current_user is not None:
+        return RedirectResponse(url='/', status_code=303)
+
+    form_data = await request.form() if request.method == 'POST' else None
+    form = ResetPasswordRequestForm(formdata=form_data, meta={'session': request.session})
+
+    if request.method == 'POST' and form.validate():
+        user = db.scalar(sa.select(User).where(User.email == form.email.data))
         if user:
             send_password_reset_email(user)
-        flash(
-            _('Check your email for the instructions to reset your password'))
-        return redirect(url_for('auth.login'))
-    return render_template('auth/reset_password_request.html',
-                           title=_('Reset Password'), form=form)
+        flash(request, _('Check your email for the instructions to reset your password'))
+        return RedirectResponse(url='/auth/login', status_code=303)
+
+    return render(request, db, 'auth/reset_password_request.html',
+                  title=_('Reset Password'), form=form)
 
 
-@bp.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+@router.api_route('/reset_password/{token}', methods=['GET', 'POST'],
+                  response_class=HTMLResponse, name='reset_password')
+async def reset_password(token: str, request: Request, db: Session = Depends(get_db)):
+    current_user = get_current_user(request, db)
+    if current_user is not None:
+        return RedirectResponse(url='/', status_code=303)
+
     user = User.verify_reset_password_token(token)
     if not user:
-        return redirect(url_for('main.index'))
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
+        return RedirectResponse(url='/', status_code=303)
+
+    form_data = await request.form() if request.method == 'POST' else None
+    form = ResetPasswordForm(formdata=form_data, meta={'session': request.session})
+
+    if request.method == 'POST' and form.validate():
         user.set_password(form.password.data)
-        db.session.commit()
-        flash(_('Your password has been reset.'))
-        return redirect(url_for('auth.login'))
-    return render_template('auth/reset_password.html', form=form)
+        db.commit()
+        flash(request, _('Your password has been reset.'))
+        return RedirectResponse(url='/auth/login', status_code=303)
+
+    return render(request, db, 'auth/reset_password.html', form=form)

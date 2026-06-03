@@ -1,19 +1,28 @@
-from app import db
-from app.api import bp
-from app.api.auth import basic_auth, token_auth
+from fastapi import Depends
+from fastapi.responses import Response
+from sqlalchemy.orm import Session
+
+from app.api import router
+from app.api.auth import get_basic_auth_user, get_token_auth_user
+from app.db import get_db
+from app.models import User
 
 
-@bp.route('/tokens', methods=['POST'])
-@basic_auth.login_required
-def get_token():
-    token = basic_auth.current_user().get_token()
-    db.session.commit()
+@router.post('/tokens', name='get_token')
+def get_token(
+    current_user: User = Depends(get_basic_auth_user),
+    db: Session = Depends(get_db),
+):
+    token = current_user.get_token()
+    db.commit()
     return {'token': token}
 
 
-@bp.route('/tokens', methods=['DELETE'])
-@token_auth.login_required
-def revoke_token():
-    token_auth.current_user().revoke_token()
-    db.session.commit()
-    return '', 204
+@router.delete('/tokens', status_code=204, name='revoke_token')
+def revoke_token(
+    current_user: User = Depends(get_token_auth_user),
+    db: Session = Depends(get_db),
+):
+    current_user.revoke_token()
+    db.commit()
+    return Response(status_code=204)

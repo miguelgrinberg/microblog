@@ -1,5 +1,5 @@
-from flask import Blueprint
+from fastapi import APIRouter
 
-bp = Blueprint('main', __name__)
+router = APIRouter()
 
-from app.main import routes
+from app.main import routes  # noqa: E402, F401

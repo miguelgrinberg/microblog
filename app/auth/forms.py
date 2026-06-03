@@ -1,49 +1,57 @@
-from flask_wtf import FlaskForm
-from flask_babel import _, lazy_gettext as _l
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 import sqlalchemy as sa
-from app import db
-from app.models import User
+from wtforms import Form, StringField, PasswordField, BooleanField, SubmitField
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.csrf.session import SessionCSRF
+from app.i18n import _l
+from config import Config
 
 
-class LoginForm(FlaskForm):
+class BaseForm(Form):
+    class Meta:
+        csrf = True
+        csrf_class = SessionCSRF
+        csrf_secret = Config.SECRET_KEY.encode()
+
+
+class LoginForm(BaseForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     password = PasswordField(_l('Password'), validators=[DataRequired()])
     remember_me = BooleanField(_l('Remember Me'))
     submit = SubmitField(_l('Sign In'))
 
 
-class RegistrationForm(FlaskForm):
+class RegistrationForm(BaseForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])
     password = PasswordField(_l('Password'), validators=[DataRequired()])
     password2 = PasswordField(
-        _l('Repeat Password'), validators=[DataRequired(),
-                                           EqualTo('password')])
+        _l('Repeat Password'),
+        validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField(_l('Register'))
 
     def validate_username(self, username):
-        user = db.session.scalar(sa.select(User).where(
-            User.username == username.data))
+        from app.db import get_db_session
+        from app.models import User
+        user = get_db_session().scalar(sa.select(User).where(User.username == username.data))
         if user is not None:
-            raise ValidationError(_('Please use a different username.'))
+            raise ValidationError(_l('Please use a different username.'))
 
     def validate_email(self, email):
-        user = db.session.scalar(sa.select(User).where(
-            User.email == email.data))
+        from app.db import get_db_session
+        from app.models import User
+        user = get_db_session().scalar(sa.select(User).where(User.email == email.data))
         if user is not None:
-            raise ValidationError(_('Please use a different email address.'))
+            raise ValidationError(_l('Please use a different email address.'))
 
 
-class ResetPasswordRequestForm(FlaskForm):
+class ResetPasswordRequestForm(BaseForm):
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])
     submit = SubmitField(_l('Request Password Reset'))
 
 
-class ResetPasswordForm(FlaskForm):
+class ResetPasswordForm(BaseForm):
     password = PasswordField(_l('Password'), validators=[DataRequired()])
     password2 = PasswordField(
-        _l('Repeat Password'), validators=[DataRequired(),
-                                           EqualTo('password')])
-    submit = SubmitField(_l('Request Password Reset'))
+        _l('Repeat Password'),
+        validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField(_l('Reset Password'))

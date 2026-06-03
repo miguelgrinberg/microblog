@@ -17,47 +17,46 @@
   <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container">
-        <a class="navbar-brand" href="{{ url_for('main.index') }}">Microblog</a>
+        <a class="navbar-brand" href="{{ request.url_path_for('index') }}">Microblog</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="{{ url_for('main.index') }}">{{ _('Home') }}</a>
+              <a class="nav-link" aria-current="page" href="{{ request.url_path_for('index') }}">{{ _('Home') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="{{ url_for('main.explore') }}">{{ _('Explore') }}</a>
+              <a class="nav-link" aria-current="page" href="{{ request.url_path_for('explore') }}">{{ _('Explore') }}</a>
             </li>
-            {% if g.search_form %}
-            <form class="navbar-form navbar-left" method="get" action="{{ url_for('main.search') }}">
+            {% if search_form %}
+            <form class="navbar-form navbar-left" method="get" action="{{ request.url_path_for('search') }}">
                 <div class="form-group">
-                    {{ g.search_form.q(size=20, class='form-control', placeholder=g.search_form.q.label.text) }}
+                    {{ search_form.q(size=20, class='form-control', placeholder=search_form.q.label.text) }}
                 </div>
             </form>
             {% endif %}
           </ul>
           <ul class="navbar-nav mb-2 mb-lg-0">
-            {% if current_user.is_anonymous %}
+            {% if not current_user %}
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
+              <a class="nav-link" aria-current="page" href="{{ request.url_path_for('login') }}">{{ _('Login') }}</a>
             </li>
             {% else %}
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="{{ url_for('main.messages') }}">{{ _('Messages') }}
+              <a class="nav-link" aria-current="page" href="{{ request.url_path_for('messages') }}">{{ _('Messages') }}
                 {% set unread_message_count = current_user.unread_message_count() %}
                 <span id="message_count" class="badge text-bg-danger"
-                      style="visibility: {% if unread_message_count %}visible
-                                         {% else %}hidden{% endif %};">
+                      style="visibility: {% if unread_message_count %}visible{% else %}hidden{% endif %};">
                     {{ unread_message_count }}
                 </span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Profile') }}</a>
+              <a class="nav-link" aria-current="page" href="{{ request.url_path_for('user', username=current_user.username) }}">{{ _('Profile') }}</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a>
+              <a class="nav-link" aria-current="page" href="{{ request.url_path_for('logout') }}">{{ _('Logout') }}</a>
             </li>
             {% endif %}
           </ul>
@@ -65,7 +64,7 @@
       </div>
     </nav>
     <div class="container mt-3">
-      {% if current_user.is_authenticated %}
+      {% if current_user %}
       {% with tasks = current_user.get_tasks_in_progress() %}
       {% if tasks %}
         {% for task in tasks %}
@@ -78,13 +77,11 @@
       {% endwith %}
       {% endif %}
 
-      {% with messages = get_flashed_messages() %}
       {% if messages %}
         {% for message in messages %}
         <div class="alert alert-info" role="alert">{{ message }}</div>
         {% endfor %}
       {% endif %}
-      {% endwith %}
       {% block content %}{% endblock %}
     </div>
     <script
@@ -92,12 +89,21 @@
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous">
     </script>
-    {{ moment.include_moment() }}
-    {{ moment.lang(g.locale) }}
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     <script>
+      function renderMoments() {
+        document.querySelectorAll('.moment').forEach(function(el) {
+          var dt = el.getAttribute('data-datetime');
+          var fmt = el.getAttribute('data-format');
+          var m = moment(dt);
+          el.innerText = fmt === 'fromNow' ? m.fromNow() : m.format(fmt);
+        });
+      }
+      document.addEventListener('DOMContentLoaded', renderMoments);
+
       async function translate(sourceElem, destElem, sourceLang, destLang) {
-        document.getElementById(destElem).innerHTML = 
-          '<img src="{{ url_for('static', filename='loading.gif') }}">';
+        document.getElementById(destElem).innerHTML =
+          '<img src="{{ request.url_path_for('static', path='loading.gif') }}">';
         const response = await fetch('/translate', {
           method: 'POST',
           headers: {'Content-Type': 'application/json; charset=utf-8'},
@@ -106,7 +112,7 @@
             source_language: sourceLang,
             dest_language: destLang
           })
-        })
+        });
         const data = await response.json();
         document.getElementById(destElem).innerText = data.text;
       }
@@ -134,7 +140,7 @@
             if (popover && data) {
               ev.target.popupLoaded = true;
               popover.setContent({'.popover-body': data});
-              flask_moment_render_all();
+              renderMoments();
             }
           });
         }
@@ -154,11 +160,11 @@
         }
       }
 
-      {% if current_user.is_authenticated %}
+      {% if current_user %}
       function initialize_notifications() {
         let since = 0;
         setInterval(async function() {
-          const response = await fetch('{{ url_for('main.notifications') }}?since=' + since);
+          const response = await fetch('{{ request.url_path_for('notifications') }}?since=' + since);
           const notifications = await response.json();
           for (let i = 0; i < notifications.length; i++) {
             switch (notifications[i].name) {
