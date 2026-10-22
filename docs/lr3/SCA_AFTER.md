@@ -32,10 +32,10 @@
 
 ## Що оновлено
 Було → стало (18 компонентів):
-Flask 3.0.0→3.1.3, Werkzeug 3.0.1→3.1.9, Jinja2 3.1.2→3.1.6, urllib3 2.1.0→2.8.0, requests 2.31.0→2.34.2, PyJWT 2.8.0→2.15.1, gunicorn 21.2.0→26.2.0, idna 3.4→3.20, certifi 2023.11.17→2026.7.22, setuptools 68.2.2→84.0.0, Mako 1.3.0→1.4.3, Pygments 2.17.1→2.21.0, python-dotenv 1.0.0→1.2.4, dnspython 2.4.2→2.9.0, aiosmtpd 1.4.4.post2→1.4.6, Flask-HTTPAuth 4.8.0→4.8.1, httpie 3.2.2→3.2.4. Супутні оновлення для сумісності з Flask 3.1: blinker 1.7.0→1.9.0, itsdangerous 2.1.2→2.2.0.
+Flask 3.0.0→3.1.3, Werkzeug 3.0.1→3.1.9, Jinja2 3.1.2→3.1.6, urllib3 2.1.0→2.8.0, requests 2.31.0→2.34.2, PyJWT 2.8.0→2.15.1, gunicorn 21.2.0→26.2.0, idna 3.4→3.20, certifi 2023.11.17→2026.10.19, setuptools 68.2.2→84.0.0, Mako 1.3.0→1.4.3, Pygments 2.17.1→2.21.0, python-dotenv 1.0.0→1.2.4, dnspython 2.4.2→2.9.0, aiosmtpd 1.4.4.post2→1.4.6, Flask-HTTPAuth 4.8.0→4.8.1, httpie 3.2.2→3.2.4. Супутні оновлення для сумісності з Flask 3.1: blinker 1.7.0→1.9.0, itsdangerous 2.1.2→2.2.0.
 
 ## Повторний скан
-`pip-audit -r requirements.txt`: **1 запис** (було 94). Звіт: `sca_after.json`.
+`pip-audit -r requirements.txt`: **1 запис** (було 94). Звіт: `sca_after.json`. Під час роботи вийшов новий advisory для certifi (PYSEC-2026-4320, виправлено у 2026.10.19), тому certifi оновлено ще раз окремим комітом.
 
 | Компонент | Версія | ID | Severity | Fix |
 |---|---|---|---|---|
