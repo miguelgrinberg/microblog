@@ -1,11 +1,12 @@
 # Завдання 3: виявлення секретів (Gitleaks + pre-commit)
 
 ## Інструменти
-- **Gitleaks 8.21.2** (сканер секретів), підключений через **pre-commit** (`.pre-commit-config.yaml`, репозиторій `gitleaks/gitleaks`, `rev: v8.21.2`, hook `gitleaks`).
+- **Gitleaks 8.21.2** (сканер секретів), підключений через **pre-commit** як локальний хук (`.pre-commit-config.yaml`, `repo: local`, `language: system`): працює без завантаження хука з мережі.
 - Хук виконує `gitleaks git --pre-commit --redact --staged -v`: сканує **staged-зміни**; якщо знайдено секрет, код виходу 1 і `git commit` блокується.
 
 ## Налаштування (один раз)
 ```
+brew install gitleaks
 pip install pre-commit
 pre-commit install
 ```

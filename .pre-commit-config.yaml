@@ -1,8 +1,10 @@
-# ЛР№3, Завд.3: автоматичне блокування комітів із секретами.
-# Встановлення: pip install pre-commit && pre-commit install
-# Разовий запуск по всьому репозиторію: pre-commit run --all-files
+# Сканування секретів перед кожним комітом.
+# Потрібно один раз: brew install gitleaks && pip install pre-commit && pre-commit install
 repos:
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.21.2
+  - repo: local
     hooks:
       - id: gitleaks
+        name: gitleaks (secret scan of staged changes)
+        entry: gitleaks git --pre-commit --redact --staged -v
+        language: system
+        pass_filenames: false
