@@ -185,6 +185,48 @@ class TranslateResilienceTestCase(unittest.TestCase):
         self.assertIn('translation unavailable', result)
         self.assertEqual(mock_post.call_count, 3)
 
+    # --- ЛР№3: захисні (characterization) тести перед рефакторингом ---
+
+    @patch('app.translate.requests.post')
+    def test_translate_not_configured_returns_error(self, mock_post):
+        # Без ключа сервісу нічого не викликається: одразу повідомлення.
+        self.app.config['MS_TRANSLATOR_KEY'] = ''
+
+        result = translate('Hello', 'en', 'uk')
+
+        self.assertIn('not configured', result)
+        self.assertEqual(mock_post.call_count, 0)
+
+    @patch('app.translate.time.sleep', return_value=None)
+    @patch('app.translate.requests.post')
+    def test_translate_retry_then_success(self, mock_post, mock_sleep):
+        # Перша спроба невдала (HTTP 500), друга успішна -> без fallback.
+        bad = MagicMock()
+        bad.status_code = 500
+        good = MagicMock()
+        good.status_code = 200
+        good.json.return_value = [{'translations': [{'text': 'Привіт'}]}]
+        mock_post.side_effect = [bad, good]
+
+        result = translate('Hello', 'en', 'uk')
+
+        self.assertEqual(result, 'Привіт')
+        self.assertEqual(mock_post.call_count, 2)
+        mock_sleep.assert_called_once_with(0.5)
+
+    @patch('app.translate.time.sleep', return_value=None)
+    @patch('app.translate.requests.post')
+    def test_translate_backoff_delays_are_exponential(
+            self, mock_post, mock_sleep):
+        # Паузи між трьома невдалими спробами: 0.5 с, потім 1.0 с
+        # (після останньої спроби пауза не потрібна).
+        mock_post.side_effect = requests.exceptions.Timeout()
+
+        translate('Hello', 'en', 'uk')
+
+        delays = [c.args[0] for c in mock_sleep.call_args_list]
+        self.assertEqual(delays, [0.5, 1.0])
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

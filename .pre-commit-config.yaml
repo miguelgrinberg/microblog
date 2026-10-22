@@ -1,0 +1,10 @@
+# Сканування секретів перед кожним комітом.
+# Потрібно один раз: brew install gitleaks && pip install pre-commit && pre-commit install
+repos:
+  - repo: local
+    hooks:
+      - id: gitleaks
+        name: gitleaks (secret scan of staged changes)
+        entry: gitleaks git --pre-commit --redact --staged -v
+        language: system
+        pass_filenames: false
