@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import copy
 from datetime import datetime, timezone, timedelta
 import unittest
 from unittest.mock import patch, MagicMock
@@ -213,6 +214,52 @@ class TranslateResilienceTestCase(unittest.TestCase):
         self.assertEqual(result, 'Привіт')
         self.assertEqual(mock_post.call_count, 2)
         mock_sleep.assert_called_once_with(0.5)
+
+    # --- ЛР№7: захист від мутації даних між спробами retry ---
+
+    @patch('app.translate.time.sleep', return_value=None)
+    @patch('app.translate.requests.post')
+    def test_retry_does_not_mutate_request_payload(self, mock_post, mock_sleep):
+        # Кожна спроба має надсилати ОДИН І ТОЙ САМИЙ текст користувача.
+        sent = []
+
+        def fake_post(url, headers=None, json=None, timeout=None):
+            sent.append(copy.deepcopy(json))   # знімок на момент виклику
+            response = MagicMock()
+            response.status_code = 500
+            return response
+
+        mock_post.side_effect = fake_post
+
+        translate('Hello World', 'en', 'uk')
+
+        self.assertEqual(len(sent), 3)
+        for payload in sent:
+            self.assertEqual(payload, [{'Text': 'Hello World'}])
+
+    @patch('app.translate.time.sleep', return_value=None)
+    @patch('app.translate.requests.post')
+    def test_translation_after_retry_is_not_corrupted(self, mock_post, mock_sleep):
+        # Бізнес-результат: після однієї невдалої спроби користувач бачить
+        # переклад свого тексту, а не службової позначки retry.
+        calls = []
+
+        def fake_post(url, headers=None, json=None, timeout=None):
+            calls.append(copy.deepcopy(json))
+            response = MagicMock()
+            if len(calls) == 1:
+                response.status_code = 500
+            else:
+                response.status_code = 200
+                response.json.return_value = [
+                    {'translations': [{'text': 'uk:' + json[0]['Text']}]}]
+            return response
+
+        mock_post.side_effect = fake_post
+
+        result = translate('Hello World', 'en', 'uk')
+
+        self.assertEqual(result, 'uk:Hello World')
 
     @patch('app.translate.time.sleep', return_value=None)
     @patch('app.translate.requests.post')

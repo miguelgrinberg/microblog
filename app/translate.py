@@ -30,6 +30,7 @@ def translate(text, source_language, dest_language):
             return result
         last_error = result
         _log_attempt_failure(attempt, last_error)
+        _mark_retry(payload, attempt)
         _wait_before_retry(attempt)
 
     return _build_fallback_response(text, last_error)
@@ -79,6 +80,15 @@ _FAILURE_REASONS = {
 
 def _classify_http_failure(status):
     return _FAILURE_REASONS.get(status, 'HTTP {}'.format(status))
+
+
+def _mark_retry(payload, attempt):
+    """Позначає повторну спробу в тексті запиту (щоб було видно в логах сервісу).
+
+    УВАГА (FAIL-симуляція ЛР7): payload — спільний мутабельний список, тому
+    запис у payload[0]['Text'] змінює дані для ВСІХ наступних спроб.
+    """
+    payload[0]['Text'] = '{} [retry {}]'.format(payload[0]['Text'], attempt)
 
 
 def _log_attempt_failure(attempt, error):
