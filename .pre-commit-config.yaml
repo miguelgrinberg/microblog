@@ -1,5 +1,5 @@
-# Сканування секретів перед кожним комітом.
-# Потрібно один раз: brew install gitleaks && pip install pre-commit && pre-commit install
+# Воротарі якості перед кожним комітом.
+# Один раз: brew install gitleaks && pip install pre-commit radon && pre-commit install
 repos:
   - repo: local
     hooks:
@@ -8,3 +8,8 @@ repos:
         entry: gitleaks git --pre-commit --redact --staged -v
         language: system
         pass_filenames: false
+      - id: complexity-gate
+        name: complexity gate (CC <= 10, radon)
+        entry: python scripts/check_complexity.py
+        language: system
+        types: [python]
