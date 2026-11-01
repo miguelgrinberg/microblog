@@ -6,7 +6,8 @@ from unittest.mock import patch, MagicMock
 import requests
 from app import create_app, db
 from app.models import User, Post
-from app.translate import translate
+from dataclasses import FrozenInstanceError
+from app.translate import translate, TranslationRequest
 from config import Config
 
 
@@ -260,6 +261,14 @@ class TranslateResilienceTestCase(unittest.TestCase):
         result = translate('Hello World', 'en', 'uk')
 
         self.assertEqual(result, 'uk:Hello World')
+
+    def test_translation_request_is_immutable(self):
+        # Value Object: поля не можна перезаписати, а headers/payload щоразу нові.
+        request = TranslationRequest(url='u', subscription_key='k', text='Hello')
+        with self.assertRaises(FrozenInstanceError):
+            request.text = 'changed'
+        request.payload[0]['Text'] = 'tampered'
+        self.assertEqual(request.payload, [{'Text': 'Hello'}])
 
     @patch('app.translate.time.sleep', return_value=None)
     @patch('app.translate.requests.post')

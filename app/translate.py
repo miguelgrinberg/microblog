@@ -1,4 +1,5 @@
 import time
+from dataclasses import dataclass
 import requests
 from flask import current_app
 from flask_babel import _
@@ -15,25 +16,57 @@ REQUEST_TIMEOUT = 2
 RETRY_BACKOFF_BASE = 0.5
 
 
+@dataclass(frozen=True)
+class TranslationRequest:
+    """Value Object: незмінний запит до сервісу перекладу.
+
+    frozen=True забороняє перезапис полів, а headers/payload щоразу
+    збираються заново, тому жодна спроба retry не може зіпсувати дані
+    наступної (і ніхто не отримає «спільний» об'єкт, який можна змінити).
+    """
+    url: str
+    subscription_key: str
+    text: str
+    region: str = 'westus'
+
+    @property
+    def headers(self):
+        return {'Ocp-Apim-Subscription-Key': self.subscription_key,
+                'Ocp-Apim-Subscription-Region': self.region}
+
+    @property
+    def payload(self):
+        return [{'Text': self.text}]
+
+
+@dataclass(frozen=True)
+class TranslationOutcome:
+    """Value Object: результат однієї спроби (ok + переклад або причина)."""
+    ok: bool
+    value: str
+
+
 def translate(text, source_language, dest_language):
-    """Переклад з Retry і Fallback. Оркестрація: кожен крок — окрема функція."""
+    """Переклад з Retry і Fallback. Оркестрація без змінних, що перезаписуються."""
     if not _is_translator_configured():
         return _('Error: the translation service is not configured.')
+    request = _build_translate_request(text, source_language, dest_language)
+    outcome = _retry_translation(request)
+    if outcome.ok:
+        return outcome.value
+    return _build_fallback_response(text, outcome.value)
 
-    url, headers, payload = _build_translate_request(
-        text, source_language, dest_language)
 
-    last_error = 'unknown error'
-    for attempt in range(1, MAX_RETRIES + 1):
-        success, result = _attempt_translation(url, headers, payload)
-        if success:
-            return result
-        last_error = result
-        _log_attempt_failure(attempt, last_error)
-        _mark_retry(payload, attempt)
-        _wait_before_retry(attempt)
-
-    return _build_fallback_response(text, last_error)
+def _retry_translation(request, attempt=1):
+    """Retry без циклу й без змінних M: нова спроба = новий виклик з attempt + 1."""
+    outcome = _attempt_translation(request)
+    if outcome.ok:
+        return outcome
+    _log_attempt_failure(attempt, outcome.value)
+    if attempt >= MAX_RETRIES:
+        return outcome
+    _wait_before_retry(attempt)
+    return _retry_translation(request, attempt + 1)
 
 
 def _is_translator_configured():
@@ -41,27 +74,26 @@ def _is_translator_configured():
 
 
 def _build_translate_request(text, source_language, dest_language):
-    headers = {
-        'Ocp-Apim-Subscription-Key': current_app.config['MS_TRANSLATOR_KEY'],
-        'Ocp-Apim-Subscription-Region': 'westus'
-    }
     url = current_app.config['TRANSLATOR_API_URL'] + \
         '?api-version=3.0&from={}&to={}'.format(source_language, dest_language)
-    return url, headers, [{'Text': text}]
+    return TranslationRequest(
+        url=url,
+        subscription_key=current_app.config['MS_TRANSLATOR_KEY'],
+        text=text)
 
 
-def _attempt_translation(url, headers, payload):
-    """Одна спроба виклику. Повертає (успіх, текст перекладу або причина)."""
+def _attempt_translation(request):
+    """Одна спроба виклику. Повертає TranslationOutcome."""
     try:
-        r = requests.post(url, headers=headers, json=payload,
-                          timeout=REQUEST_TIMEOUT)
+        r = requests.post(request.url, headers=request.headers,
+                          json=request.payload, timeout=REQUEST_TIMEOUT)
     except requests.exceptions.Timeout:
-        return False, 'timeout'
+        return TranslationOutcome(False, 'timeout')
     except requests.exceptions.ConnectionError:
-        return False, 'connection error'
+        return TranslationOutcome(False, 'connection error')
     if r.status_code != 200:
-        return False, _classify_http_failure(r.status_code)
-    return True, r.json()[0]['translations'][0]['text']
+        return TranslationOutcome(False, _classify_http_failure(r.status_code))
+    return TranslationOutcome(True, r.json()[0]['translations'][0]['text'])
 
 
 # Довідник причин відмови: ключ — HTTP-статус, значення — причина.
@@ -80,15 +112,6 @@ _FAILURE_REASONS = {
 
 def _classify_http_failure(status):
     return _FAILURE_REASONS.get(status, 'HTTP {}'.format(status))
-
-
-def _mark_retry(payload, attempt):
-    """Позначає повторну спробу в тексті запиту (щоб було видно в логах сервісу).
-
-    УВАГА (FAIL-симуляція ЛР7): payload — спільний мутабельний список, тому
-    запис у payload[0]['Text'] змінює дані для ВСІХ наступних спроб.
-    """
-    payload[0]['Text'] = '{} [retry {}]'.format(payload[0]['Text'], attempt)
 
 
 def _log_attempt_failure(attempt, error):
