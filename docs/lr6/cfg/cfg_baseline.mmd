@@ -1,0 +1,14 @@
+flowchart TD
+    A["1. r = requests.post(...)"] --> P1{"2. except Timeout?"}
+    P1 -- так --> R1["3. return False, 'timeout'"]
+    P1 -- ні --> P2{"4. except ConnectionError?"}
+    P2 -- так --> R2["5. return False, 'connection error'"]
+    P2 -- ні --> P3{"6. r.status_code != 200?"}
+    P3 -- так --> R3["7. return False, 'HTTP n'"]
+    P3 -- ні --> R4["8. return True, text"]
+    R1 --> X(("exit"))
+    R2 --> X
+    R3 --> X
+    R4 --> X
+    classDef pred fill:#fde68a,stroke:#b45309;
+    class P1,P2,P3 pred;

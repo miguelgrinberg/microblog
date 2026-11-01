@@ -1,0 +1,63 @@
+flowchart TD
+    START(["_classify_http_failure(status)"]):::future
+    Q1{"status == 401?"}:::future
+    Q2{"status == 403?"}:::future
+    Q3{"status == 407?"}:::future
+    Q4{"status == 511?"}:::future
+    Q5{"status == 408?"}:::future
+    Q6{"status == 425?"}:::future
+    Q7{"status == 429?"}:::future
+    Q8{"status == 504?"}:::future
+    Q9{"status == 500?"}:::future
+    Q10{"status == 502?"}:::future
+    Q11{"status == 503?"}:::future
+    Q12{"status == 505?"}:::future
+    Q13{"status == 400?"}:::future
+    Q14{"status == 404?"}:::future
+    Q15{"status == 413?"}:::future
+    Q16{"status == 415?"}:::future
+    S1["return 'authorization error'"]:::future
+    S2["return 'throttled or timed out'"]:::future
+    S3["return 'server error'"]:::future
+    S4["return 'bad request'"]:::future
+    S5["return 'HTTP n'"]:::future
+    X(("exit"))
+    START --> Q1
+    Q1 -. так .-> S1
+    Q1 -. ні .-> Q2
+    Q2 -. так .-> S1
+    Q2 -. ні .-> Q3
+    Q3 -. так .-> S1
+    Q3 -. ні .-> Q4
+    Q4 -. так .-> S1
+    Q4 -. ні .-> Q5
+    Q5 -. так .-> S2
+    Q5 -. ні .-> Q6
+    Q6 -. так .-> S2
+    Q6 -. ні .-> Q7
+    Q7 -. так .-> S2
+    Q7 -. ні .-> Q8
+    Q8 -. так .-> S2
+    Q8 -. ні .-> Q9
+    Q9 -. так .-> S3
+    Q9 -. ні .-> Q10
+    Q10 -. так .-> S3
+    Q10 -. ні .-> Q11
+    Q11 -. так .-> S3
+    Q11 -. ні .-> Q12
+    Q12 -. так .-> S3
+    Q12 -. ні .-> Q13
+    Q13 -. так .-> S4
+    Q13 -. ні .-> Q14
+    Q14 -. так .-> S4
+    Q14 -. ні .-> Q15
+    Q15 -. так .-> S4
+    Q15 -. ні .-> Q16
+    Q16 -. так .-> S4
+    Q16 -. ні .-> S5
+    S1 -.-> X
+    S2 -.-> X
+    S3 -.-> X
+    S4 -.-> X
+    S5 -.-> X
+    classDef future fill:#fee2e2,stroke:#b91c1c,stroke-dasharray:5 3;
