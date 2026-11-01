@@ -59,8 +59,22 @@ def _attempt_translation(url, headers, payload):
     except requests.exceptions.ConnectionError:
         return False, 'connection error'
     if r.status_code != 200:
-        return False, 'HTTP {}'.format(r.status_code)
+        return False, _classify_http_failure(r.status_code)
     return True, r.json()[0]['translations'][0]['text']
+
+
+def _classify_http_failure(status):
+    """Причина відмови сервісу перекладу за HTTP-статусом (монолітна версія)."""
+    if status == 401 or status == 403 or status == 407 or status == 511:
+        return 'authorization error'
+    elif status == 408 or status == 425 or status == 429 or status == 504:
+        return 'throttled or timed out'
+    elif status == 500 or status == 502 or status == 503 or status == 505:
+        return 'server error'
+    elif status == 400 or status == 404 or status == 413 or status == 415:
+        return 'bad request'
+    else:
+        return 'HTTP {}'.format(status)
 
 
 def _log_attempt_failure(attempt, error):
