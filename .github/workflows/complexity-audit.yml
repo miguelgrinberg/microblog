@@ -1,0 +1,46 @@
+name: complexity-audit
+
+# ЛР7, Завд.3: на кожен push / pull request у Docker-контейнері встановлюємо
+# сканери, експортуємо звіти складності в JSON/CSV, рахуємо churn за git log
+# і збираємо матрицю Hotspots. Усе зберігається як артефакт збірки.
+on: [push, pull_request]
+
+jobs:
+  hotspots:
+    runs-on: ubuntu-latest
+    container: python:3.12        # завдання виконується всередині Docker-контейнера
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # потрібна ПОВНА історія для git log (churn)
+
+      - name: Allow git inside container
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Install complexity scanners
+        run: pip install radon==6.0.1 lizard==1.24.3
+
+      - name: Scan repository, export machine-readable reports
+        run: |
+          mkdir -p reports
+          radon cc -j app > reports/radon_cc.json
+          radon hal -j app > reports/radon_hal.json
+          lizard app --csv > reports/lizard.csv
+
+      - name: Code churn (git log)
+        run: |
+          git log --format=format: --name-only | egrep -v '^$' | sort | uniq -c | sort -nr > reports/churn_all.txt
+          git log --since="90 days ago" --format=format: --name-only | egrep -v '^$' | sort | uniq -c | sort -nr > reports/churn_90d.txt
+          head -15 reports/churn_all.txt
+
+      - name: Build Hotspots matrix
+        run: |
+          python scripts/hotspots.py --cc reports/radon_cc.json --hal reports/radon_hal.json \
+            --out-csv reports/hotspots.csv --out-md reports/hotspots.md
+          cat reports/hotspots.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: complexity-report
+          path: reports/

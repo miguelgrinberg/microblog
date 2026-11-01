@@ -1,0 +1,22 @@
+| Файл | ΣCC | max CC | Halstead E | Коміти (вся історія) | Коміти (90 днів) | Категорія |
+|---|---|---|---|---|---|---|
+| app/models.py | 81 | 7 | 4223.4 | 11 | 0 | High Risk (Hotspot) |
+| app/main/routes.py | 43 | 5 | 1517.5 | 8 | 3 | High Risk (Hotspot) |
+| app/translate.py | 22 | 4 | 533.2 | 9 | 7 | High Risk (Hotspot) |
+| app/__init__.py | 16 | 5 | 67.5 | 14 | 1 | High Risk (Hotspot) |
+| app/auth/routes.py | 19 | 7 | 259.3 | 2 | 1 | Sleeping Danger |
+| app/api/users.py | 18 | 8 | 1003.7 | 1 | 0 | Sleeping Danger |
+| app/main/forms.py | 17 | 4 | 134.4 | 3 | 0 | Sleeping Danger |
+| app/auth/forms.py | 10 | 3 | 39.9 | 9 | 0 | Active Development |
+| app/cli.py | 9 | 3 | 2.4 | 2 | 0 | Stable Code |
+| app/search.py | 8 | 3 | 59.8 | 1 | 0 | Stable Code |
+| app/api/auth.py | 7 | 3 | 18.6 | 1 | 0 | Stable Code |
+| app/tasks.py | 6 | 3 | 123.3 | 1 | 0 | Stable Code |
+| app/email.py | 5 | 4 | 0 | 4 | 0 | Stable Code |
+| app/errors/handlers.py | 5 | 2 | 2.4 | 2 | 0 | Stable Code |
+| app/api/errors.py | 4 | 2 | 0 | 1 | 0 | Stable Code |
+| app/api/tokens.py | 2 | 1 | 0 | 1 | 0 | Stable Code |
+| app/reputation.py | 1 | 1 | 0 | 1 | 1 | Stable Code |
+| app/auth/email.py | 1 | 1 | 0 | 1 | 0 | Stable Code |
+
+Пороги: ΣCC >= 15 (висока складність), коміти >= 7 (висока мінливість).
