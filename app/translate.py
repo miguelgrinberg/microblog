@@ -63,18 +63,22 @@ def _attempt_translation(url, headers, payload):
     return True, r.json()[0]['translations'][0]['text']
 
 
+# Довідник причин відмови: ключ — HTTP-статус, значення — причина.
+# Замість ланцюга if/elif нова причина додається одним рядком даних.
+_FAILURE_REASONS = {
+    401: 'authorization error', 403: 'authorization error',
+    407: 'authorization error', 511: 'authorization error',
+    408: 'throttled or timed out', 425: 'throttled or timed out',
+    429: 'throttled or timed out', 504: 'throttled or timed out',
+    500: 'server error', 502: 'server error',
+    503: 'server error', 505: 'server error',
+    400: 'bad request', 404: 'bad request',
+    413: 'bad request', 415: 'bad request',
+}
+
+
 def _classify_http_failure(status):
-    """Причина відмови сервісу перекладу за HTTP-статусом (монолітна версія)."""
-    if status == 401 or status == 403 or status == 407 or status == 511:
-        return 'authorization error'
-    elif status == 408 or status == 425 or status == 429 or status == 504:
-        return 'throttled or timed out'
-    elif status == 500 or status == 502 or status == 503 or status == 505:
-        return 'server error'
-    elif status == 400 or status == 404 or status == 413 or status == 415:
-        return 'bad request'
-    else:
-        return 'HTTP {}'.format(status)
+    return _FAILURE_REASONS.get(status, 'HTTP {}'.format(status))
 
 
 def _log_attempt_failure(attempt, error):
