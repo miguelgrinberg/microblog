@@ -54,3 +54,9 @@ def export_posts(user_id):
         app.logger.error('Unhandled exception', exc_info=sys.exc_info())
     finally:
         _set_task_progress(100)
+
+
+def marketing_digest(user_id, campaign='weekly-digest'):
+    """ЛР4: background job; згода перевіряється в момент виконання."""
+    from app.privacy.consent import marketing_digest_job
+    return marketing_digest_job(user_id, campaign)

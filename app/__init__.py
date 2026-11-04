@@ -12,6 +12,7 @@ from elasticsearch import Elasticsearch
 from redis import Redis
 import rq
 from config import Config
+from app.privacy.secure_logging import make_secure_handler
 
 
 def get_locale():
@@ -33,10 +34,16 @@ def create_app(config_class=Config):
     # шляхом Extract Method — логіку розбито на три незалежні кроки.
     app = Flask(__name__)
     app.config.from_object(config_class)
+    # ЛР4: стабільний порядок полів JSON = порядок контракту (метадані першими)
+    app.json.sort_keys = False
 
     _init_extensions(app)
     _register_blueprints(app)
     _configure_logging(app)
+
+    # ЛР4: централізоване безпечне логування діє в УСІХ режимах
+    from app.privacy import secure_logging
+    secure_logging.init_app(app)
 
     return app
 
@@ -76,7 +83,12 @@ def _register_blueprints(app):
 def _configure_logging(app):
     """Налаштування логування. Guard Clause прибирає перший рівень
     вкладеності: у debug/testing-режимі логування не потрібне."""
-    if app.debug or app.testing:
+    if app.testing:
+        return
+    if app.debug:
+        # ЛР4: у debug дозволяємо безпечний stdout-лог (для live demo)
+        if app.config['LOG_TO_STDOUT']:
+            _configure_file_or_stdout_logging(app)
         return
 
     _configure_mail_logging(app)
@@ -101,6 +113,7 @@ def _configure_mail_logging(app):
         fromaddr='no-reply@' + app.config['MAIL_SERVER'],
         toaddrs=app.config['ADMINS'], subject='Microblog Failure',
         credentials=auth, secure=secure)
+    make_secure_handler(mail_handler)  # листи адміну теж без PII/секретів
     mail_handler.setLevel(logging.ERROR)
     app.logger.addHandler(mail_handler)
 
@@ -108,18 +121,20 @@ def _configure_mail_logging(app):
 def _configure_file_or_stdout_logging(app):
     """Guard Clause замість if/else — файлове чи stdout логування (Extract Method)."""
     if app.config['LOG_TO_STDOUT']:
-        stream_handler = logging.StreamHandler()
+        stream_handler = make_secure_handler(
+            logging.StreamHandler(), app.config.get('LOG_FORMAT', 'text'))
         stream_handler.setLevel(logging.INFO)
+        from flask.logging import default_handler
+        app.logger.removeHandler(default_handler)  # без дублювання рядків
         app.logger.addHandler(stream_handler)
         return
 
     if not os.path.exists('logs'):
         os.mkdir('logs')
-    file_handler = RotatingFileHandler('logs/microblog.log',
-                                       maxBytes=10240, backupCount=10)
-    file_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s '
-        '[in %(pathname)s:%(lineno)d]'))
+    file_handler = make_secure_handler(
+        RotatingFileHandler('logs/microblog.log', maxBytes=10240,
+                            backupCount=10),
+        app.config.get('LOG_FORMAT', 'text'))
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
 

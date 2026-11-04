@@ -38,3 +38,8 @@ def compile():
     """Compile all languages."""
     if os.system('pybabel compile -d app/translations'):
         raise RuntimeError('compile command failed')
+
+
+# ЛР4: команди `flask privacy ...`
+from app.privacy.cli import register as _register_privacy_cli  # noqa: E402
+_register_privacy_cli(bp)

@@ -109,6 +109,12 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
     token: so.Mapped[Optional[str]] = so.mapped_column(
         sa.String(32), index=True, unique=True)
     token_expiration: so.Mapped[Optional[datetime]]
+    # ЛР4: контактні дані та службові security-поля
+    phone: so.Mapped[Optional[str]] = so.mapped_column(sa.String(32))
+    # internal security flag: явне повноваження Privacy Officer (не експортується)
+    can_manage_privacy: so.Mapped[bool] = so.mapped_column(
+        default=False, server_default=sa.false())
+    anonymized_at: so.Mapped[Optional[datetime]]
 
     posts: so.WriteOnlyMapped['Post'] = so.relationship(
         back_populates='author')
@@ -135,6 +141,8 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
+        if not self.password_hash:  # анонімізований суб'єкт не має входу
+            return False
         return check_password_hash(self.password_hash, password)
 
     def avatar(self, size):
@@ -250,7 +258,7 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
         return data
 
     def from_dict(self, data, new_user=False):
-        for field in ['username', 'email', 'about_me']:
+        for field in ['username', 'email', 'about_me', 'phone']:
             if field in data:
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
@@ -273,7 +281,8 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
     @staticmethod
     def check_token(token):
         user = db.session.scalar(sa.select(User).where(User.token == token))
-        if user is None or user.token_expiration.replace(
+        if user is None or user.token_expiration is None or \
+                user.token_expiration.replace(
                 tzinfo=timezone.utc) < datetime.now(timezone.utc):
             return None
         return user
@@ -354,3 +363,77 @@ class Task(db.Model):
     def get_progress(self):
         job = self.get_rq_job()
         return job.meta.get('progress', 0) if job is not None else 100
+
+
+# ---------------------------------------------------------------------------
+# ЛР4. Privacy Engineering
+# ---------------------------------------------------------------------------
+
+def _utcnow():
+    return datetime.now(timezone.utc)
+
+
+class UserConsent(db.Model):
+    """Поточний стан згоди: ОДИН запис на (user, purpose)."""
+    __tablename__ = 'user_consent'
+    __table_args__ = (sa.UniqueConstraint('user_id', 'purpose',
+                                          name='uq_user_consent_purpose'),)
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
+                                               index=True)
+    purpose: so.Mapped[str] = so.mapped_column(sa.String(32))
+    status: so.Mapped[str] = so.mapped_column(sa.String(16))  # GRANTED|WITHDRAWN
+    policy_version: so.Mapped[str] = so.mapped_column(sa.String(32))
+    source: so.Mapped[str] = so.mapped_column(sa.String(16))
+    granted_at: so.Mapped[Optional[datetime]]
+    withdrawn_at: so.Mapped[Optional[datetime]]
+    updated_at: so.Mapped[datetime] = so.mapped_column(default=_utcnow)
+
+
+class ConsentEvent(db.Model):
+    """Append-only історія (доказ): хто, яку версію політики, коли, яким каналом."""
+    __tablename__ = 'consent_event'
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
+                                               index=True)
+    purpose: so.Mapped[str] = so.mapped_column(sa.String(32))
+    action: so.Mapped[str] = so.mapped_column(sa.String(8))  # GRANT|REVOKE
+    policy_version: so.Mapped[str] = so.mapped_column(sa.String(32))
+    source: so.Mapped[str] = so.mapped_column(sa.String(16))
+    occurred_at: so.Mapped[datetime] = so.mapped_column(default=_utcnow)
+    correlation_id: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64))
+
+
+class AnalyticsEvent(db.Model):
+    """Історія дій (optional analytics) - пишеться ЛИШЕ за згоди."""
+    __tablename__ = 'analytics_event'
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
+                                               index=True)
+    name: so.Mapped[str] = so.mapped_column(sa.String(64))
+    occurred_at: so.Mapped[datetime] = so.mapped_column(default=_utcnow)
+
+
+class MarketingDispatch(db.Model):
+    """Побічний ефект маркетингової розсилки (факт відправлення листа)."""
+    __tablename__ = 'marketing_dispatch'
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
+                                               index=True)
+    campaign: so.Mapped[str] = so.mapped_column(sa.String(64))
+    policy_version: so.Mapped[str] = so.mapped_column(sa.String(32))
+    sent_at: so.Mapped[datetime] = so.mapped_column(default=_utcnow)
+
+
+class AuditEvent(db.Model):
+    """Privacy-safe audit: лише псевдонімні refs, без PII і без значень."""
+    __tablename__ = 'audit_event'
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    occurred_at: so.Mapped[datetime] = so.mapped_column(default=_utcnow,
+                                                        index=True)
+    action: so.Mapped[str] = so.mapped_column(sa.String(64))
+    actor_ref: so.Mapped[str] = so.mapped_column(sa.String(32))
+    subject_ref: so.Mapped[str] = so.mapped_column(sa.String(32))
+    result: so.Mapped[str] = so.mapped_column(sa.String(16))
+    correlation_id: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64))
+    details_json: so.Mapped[Optional[str]] = so.mapped_column(sa.Text)

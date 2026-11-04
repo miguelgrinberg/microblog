@@ -25,3 +25,9 @@ class Config:
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
     REDIS_URL = os.environ.get('REDIS_URL') or 'redis://'
     POSTS_PER_PAGE = 25
+    # ЛР4: формат логів (text | json) та поточні версії політик згоди
+    LOG_FORMAT = os.environ.get('LOG_FORMAT', 'text')
+    CONSENT_POLICY_VERSIONS = {
+        'MARKETING_EMAIL': '2026-10-01',
+        'OPTIONAL_ANALYTICS': '2026-10-01',
+    }
